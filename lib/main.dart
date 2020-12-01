@@ -110,6 +110,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     fit: BoxFit.contain,
                   ),
                 ),
+                SizedBox(height: 15.0),
+                Text(
+                  'NIH Inspection App',
+                  style: TextStyle(fontSize: 38),
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(height: 45.0),
                 emailField,
                 SizedBox(height: 25.0),
@@ -143,45 +149,48 @@ class MainPage extends StatelessWidget {
             leading: Icon(Icons.medical_services),
             title: Text('Polyclinic Hospital'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SurveyPage()),
-              );
+              _navigateAndDisplaySurvey(context);
             },
           ),
           ListTile(
             leading: Icon(Icons.medical_services),
             title: Text('PIMS Hospital Islamabad'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SurveyPage()),
-              );
+              _navigateAndDisplaySurvey(context);
             },
           ),
           ListTile(
             leading: Icon(Icons.medical_services),
             title: Text('CDA Hospital'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SurveyPage()),
-              );
+              _navigateAndDisplaySurvey(context);
             },
           ),
           ListTile(
             leading: Icon(Icons.medical_services),
             title: Text('Federal Government Dispensary - AGPR G-8/4'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SurveyPage()),
-              );
+              _navigateAndDisplaySurvey(context);
             },
           ),
         ],
       ),
     );
+  }
+
+  _navigateAndDisplaySurvey(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SurveyPage()),
+    );
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text("$result")));
   }
 }
 
@@ -348,7 +357,7 @@ class _SurveyPageState extends State<SurveyPage> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context, true);
+                      Navigator.pop(context, "Survey submitted successfully.");
                     },
                     child: Text('Submit survey'),
                   ),
