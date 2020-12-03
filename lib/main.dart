@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NIH Inspection App',
+      title: 'Hospection',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'NIH Inspection App'),
+      home: MyHomePage(title: 'Hospection'),
     );
   }
 }
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final loginButton = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.blue,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -112,8 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(height: 15.0),
                 Text(
-                  'NIH Inspection App',
-                  style: TextStyle(fontSize: 38),
+                  'Hospection',
+                  style: TextStyle(fontSize: 30, fontFamily: 'Montserrat'),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 45.0),
@@ -137,9 +137,12 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class MainPage extends StatelessWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Hospital's List"),
       ),
@@ -188,9 +191,8 @@ class MainPage extends StatelessWidget {
 
     // After the Selection Screen returns a result, hide any previous snackbars
     // and show the new result.
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("$result")));
+    final snackBar = SnackBar(content: Text('$result'));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }
 
