@@ -1,4 +1,4 @@
-package com.example.nih_inspection_app
+package com.codeforpakistan.hospection
 
 import io.flutter.embedding.android.FlutterActivity
 
