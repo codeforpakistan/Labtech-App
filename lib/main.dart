@@ -220,6 +220,14 @@ class _SurveyPageState extends State<SurveyPage> {
         builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios),
+              tooltip: "Cancel and Return to List",
+              onPressed: () {
+                Navigator.pop(context, "You didn't submit the survey.");
+              },
+            ),
+            automaticallyImplyLeading: false,
             title: Text("Survey Questions"),
           ),
           body: Center(
