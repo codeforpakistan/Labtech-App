@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
 // import 'package:http/http.dart' as http;
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
+class Login extends StatefulWidget {
+  Login({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginState createState() => _LoginState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginState extends State<Login> {
   TextStyle style = TextStyle(fontFamily: 'Century Gothic', fontSize: 20.0);
   var url = "http://localhost/api/v1/login/access-token";
   final userNameController = TextEditingController();
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SubmittedSurveysListPage()),
+            MaterialPageRoute(builder: (context) => SubmittedSurveyList()),
           );
         },
         child: Text("Login",

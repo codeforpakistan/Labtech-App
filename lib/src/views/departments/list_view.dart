@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/views/survey_submissions/create_view.dart';
 
-class DepartmentPage extends StatelessWidget {
+class DepartmentList extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -44,7 +44,7 @@ class DepartmentPage extends StatelessWidget {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SurveyPage()),
+      MaterialPageRoute(builder: (context) => SubmitSurvey()),
     );
 
     // After the Selection Screen returns a result, hide any previous snackbars

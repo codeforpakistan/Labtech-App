@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/views/hospitals/list_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
 
-class SubmittedSurveysListPage extends StatelessWidget {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+class SubmittedSurveyList extends StatefulWidget {
+  @override
+  _SubmittedSurveyListState createState() => _SubmittedSurveyListState();
+}
 
+class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +40,7 @@ class SubmittedSurveysListPage extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MainPage()),
+            MaterialPageRoute(builder: (context) => HospitalList()),
           );
         },
         child: Icon(Icons.edit),
@@ -49,7 +53,7 @@ class SubmittedSurveysListPage extends StatelessWidget {
   _navigateAndDisplaySurvey(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => SubmittedSurveyDetails()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ShowSurveyDetails()));
   }
 }

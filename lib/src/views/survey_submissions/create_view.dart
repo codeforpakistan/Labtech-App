@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SurveyPage extends StatefulWidget {
+class SubmitSurvey extends StatefulWidget {
   @override
-  _SurveyPageState createState() => _SurveyPageState();
+  _SubmitSurveyState createState() => _SubmitSurveyState();
 }
 
-class _SurveyPageState extends State<SurveyPage> {
+class _SubmitSurveyState extends State<SubmitSurvey> {
   bool _checkedQ1 = false;
   bool _checkedQ2 = false;
   bool _checkedQ3 = false;
@@ -171,7 +171,8 @@ class _SurveyPageState extends State<SurveyPage> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.popAndPushNamed(context, '/mainlistpage');
+                      Navigator.popAndPushNamed(
+                          context, '/submitted-survey-list');
                     },
                     child: Text('Submit survey'),
                   ),

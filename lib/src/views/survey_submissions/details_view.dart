@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SubmittedSurveyDetails extends StatelessWidget {
+class ShowSurveyDetails extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
+import 'package:hospection/src/views/departments/list_view.dart';
+import 'package:hospection/src/views/hospitals/list_view.dart';
+import 'package:hospection/src/views/survey_submissions/create_view.dart';
+import 'package:hospection/src/views/survey_submissions/details_view.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
 
 class Hosepction extends StatelessWidget {
@@ -12,10 +16,14 @@ class Hosepction extends StatelessWidget {
         primarySwatch: Colors.lightGreen,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(title: 'Hospection'),
+      home: Login(title: 'Hospection'),
       routes: {
-        '/login': (context) => LoginPage(),
-        '/mainlistpage': (context) => SubmittedSurveysListPage()
+        '/login': (context) => Login(),
+        '/submitted-survey-list': (context) => SubmittedSurveyList(),
+        '/show-survey-details': (context) => ShowSurveyDetails(),
+        '/hospital-list': (context) => HospitalList(),
+        '/department-list': (context) => DepartmentList(),
+        '/submit-survey': (context) => SubmitSurvey(),
       },
     );
   }

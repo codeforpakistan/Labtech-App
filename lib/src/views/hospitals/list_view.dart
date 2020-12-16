@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/views/departments/list_view.dart';
 
-class MainPage extends StatelessWidget {
+class HospitalList extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -51,7 +51,7 @@ class MainPage extends StatelessWidget {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DepartmentPage()),
+      MaterialPageRoute(builder: (context) => DepartmentList()),
     );
 
     // After the Selection Screen returns a result, hide any previous snackbars
