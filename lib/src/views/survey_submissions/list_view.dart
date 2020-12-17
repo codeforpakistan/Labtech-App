@@ -55,10 +55,7 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HospitalList()),
-          );
+          Navigator.pushNamed(context, '/hospital-list');
         },
         child: Icon(Icons.edit),
         backgroundColor: Colors.lightGreen,
@@ -68,9 +65,6 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
   }
 
   _navigateAndDisplaySurvey(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ShowSurveyDetails()));
+    Navigator.pushNamed(context, '/show-survey-details');
   }
 }

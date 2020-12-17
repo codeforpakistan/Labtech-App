@@ -1,9 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
-import 'package:hospection/src/views/departments/list_view.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HospitalList extends StatefulWidget {
   @override
@@ -12,16 +10,9 @@ class HospitalList extends StatefulWidget {
 
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var url = "http://18.220.218.41/api/v1/hospitals/";
-  var data;
 
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
-
-  Future getData() async {
+  Future getHospitalData() async {
+    var url = "http://18.220.218.41/api/v1/hospitals/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -31,9 +22,9 @@ class _HospitalListState extends State<HospitalList> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    data = json.decode(response.body);
+    var data = json.decode(response.body);
     print(response.body);
-    setState(() {});
+    return data;
   }
 
   @override
@@ -46,40 +37,51 @@ class _HospitalListState extends State<HospitalList> {
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: data == null
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListTile(
-                    leading: Icon(Icons.medical_services),
-                    title: Text(data[index]['name']),
-                    subtitle: Text("Address: ${data[index]["address"]}"),
-                    onTap: () {
-                      _navigateAndDisplaySurvey(context);
-                    },
-                  ),
-                );
-              },
-            ),
+      body: FutureBuilder(
+        future: getHospitalData(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Center(child: Text("Getting the hospitals list"));
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Center(
+                    child: Text(
+                        "Some unknown error has occurred, please contact your system administrator"));
+              }
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListTile(
+                      leading: Icon(Icons.medical_services),
+                      title: Text(snapshot.data[index]['name']),
+                      subtitle:
+                          Text("Address: ${snapshot.data[index]["address"]}"),
+                      onTap: () {
+                        _navigateAndDisplaySurvey(
+                            context, snapshot.data[index]["id"]);
+                      },
+                    ),
+                  );
+                },
+              );
+              break;
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+            default:
+              return Center(child: CircularProgressIndicator());
+              break;
+          }
+        },
+      ),
     );
   }
 
-  _navigateAndDisplaySurvey(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => DepartmentList()),
-    );
-
-    // After the Selection Screen returns a result, hide any previous snackbars
-    // and show the new result.
-    final snackBar = SnackBar(content: Text('$result'));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+  _navigateAndDisplaySurvey(BuildContext context, hospitalId) async {
+    Navigator.pushNamed(context, "/department-list",
+        arguments: {"hospital_id": hospitalId});
   }
 }

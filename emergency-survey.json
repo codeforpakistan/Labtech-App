@@ -1,0 +1,110 @@
+{
+  "name": "emergency Survey",
+  "questions": [
+    {
+      "q_id": 1,
+      "question": "Is the prompt and safe healthcare being assured?",
+      "weightage": 3
+    },
+    {
+      "q_id": 2,
+      "question": "Are the SOP’s being properly ensured?",
+      "weightage": 3
+    },
+    {
+      "q_id": 3,
+      "question": "Is the registration computerized?",
+      "weightage": 3
+    },
+    {
+      "q_id": 4,
+      "question": "Are the patients being facilitated at the triage/registration counter?",
+      "weightage": 3
+    },
+    {
+      "q_id": 5,
+      "question": "Does the emergency have adequate waiting area?",
+      "weightage": 1
+    },
+    {
+      "q_id": 6,
+      "question": "Does the emergency environment support healthy interaction between patient and hospital staff?",
+      "weightage": 2
+    },
+    {
+      "q_id": 7,
+      "question": "Is the emergency having the following systems?",
+      "weightage": 3,
+      "sub_questions": [
+        {
+          "s_q_id": 1,
+          "question": "Security",
+          "weightage": 3
+        },
+        {
+          "s_q_id": 2,
+          "question": "Transport",
+          "weightage": 3
+        }
+      ]
+    },
+    {
+      "q_id": 8,
+      "question": "Does the emergency have adequate necessary resuscitation equipment & drugs?",
+      "weightage": 3
+    },
+    {
+      "q_id": 9,
+      "question": "Does the emergency have adequate necessary human resources (Doctors, Nurses, Paramedical & support staff) available?",
+      "weightage": 3
+    },
+    {
+      "q_id": 10,
+      "question": "Is the staff present as per duty rosters?",
+      "weightage": 3
+    },
+    {
+      "q_id": 11,
+      "question": "Is the emergency clean with proper hospital waste management mechanism?",
+      "weightage": 3
+    },
+    {
+      "q_id": 12,
+      "question": "Are there adequate stretchers & wheelchairs available with adequate storage & maintenance capacity?",
+      "weightage": 3
+    },
+    {
+      "q_id": 13,
+      "question": "Are the following Facilities available within emergency?",
+      "weightage": 2,
+      "sub_questions": [
+        {
+          "s_q_id": 1,
+          "question": "Heating",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 2,
+          "question": "Cooling",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 3,
+          "question": "Electricity",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 4,
+          "question": "Water Supply",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 5,
+          "question": "Signages/Directions",
+          "weightage": 2
+        }
+      ]
+    }
+  ],
+  "department_q_id": 1
+}

@@ -1,0 +1,115 @@
+{
+  "name": "OPD Survey",
+  "questions": [
+    {
+      "q_id": 1,
+      "question": "Is the prompt and safe healthcare being assured?",
+      "weightage": 3
+    },
+    {
+      "q_id": 2,
+      "question": "Are the SOP’s being properly ensured?",
+      "weightage": 3
+    },
+    {
+      "q_id": 3,
+      "question": "Is the registration computerized?",
+      "weightage": 2
+    },
+    {
+      "q_id": 4,
+      "question": "Are the patients being facilitated at the registration counter?",
+      "weightage": 2
+    },
+    {
+      "q_id": 5,
+      "question": "Does the OPD have adequate waiting area?",
+      "weightage": 2
+    },
+    {
+      "q_id": 6,
+      "question": "Does the OPD environment support healthy interaction between patient and hospital staff?",
+      "weightage": 2
+    },
+    {
+      "q_id": 7,
+      "question": "Is the OPD having the following systems?",
+      "weightage": 2,
+      "sub_questions": [
+        {
+          "s_q_id": 1,
+          "question": "Security",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 2,
+          "question": "Transport",
+          "weightage": 2
+        }
+      ]
+    },
+    {
+      "q_id": 8,
+      "question": "Does the OPD have adequate necessary medical assistance rooms, equipment & drugs?",
+      "weightage": 3
+    },
+    {
+      "q_id": 9,
+      "question": "Does the OPD have adequate necessary human resources (Doctors, Nurses, Paramedical & support staff) available?",
+      "weightage": 3
+    },
+    {
+      "q_id": 10,
+      "question": "Is the staff present as per duty rosters?",
+      "weightage": 3
+    },
+    {
+      "q_id": 11,
+      "question": "Is the OPD clean with proper hospital waste management mechanism?",
+      "weightage": 3
+    },
+    {
+      "q_id": 12,
+      "question": "Are there adequate stretchers & wheelchairs available with adequate storage & maintenance capacity?",
+      "weightage": 2
+    },
+    {
+      "q_id": 13,
+      "question": "Are the following Facilities available within OPD?",
+      "weightage": 2,
+      "sub_questions": [
+        {
+          "s_q_id": 1,
+          "question": "Heating",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 2,
+          "question": "Cooling",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 3,
+          "question": "Electricity",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 4,
+          "question": "Water Supply",
+          "weightage": 2
+        },
+        {
+          "s_q_id": 5,
+          "question": "Signages/Directions",
+          "weightage": 2
+        }
+      ]
+    },
+    {
+      "q_id": 14,
+      "question": "Is the doctor patient ratio being maintained in OPD?",
+      "weightage": 3
+    }
+  ],
+  "department_q_id": 3
+}

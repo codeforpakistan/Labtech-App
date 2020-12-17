@@ -20,6 +20,10 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   bool _checkedQ12 = false;
   @override
   Widget build(BuildContext context) {
+    final Map<String, Object> dataFromDepartmentScreen =
+        ModalRoute.of(context).settings.arguments;
+    var hospitalId = dataFromDepartmentScreen['hospital_id'];
+    var departmentId = dataFromDepartmentScreen['department_id'];
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
@@ -174,8 +178,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(
-                          context, '/submitted-survey-list');
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/submitted-survey-list',
+                          (Route<dynamic> route) => false);
                     },
                     child: Text('Submit survey'),
                   ),
