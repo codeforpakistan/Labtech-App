@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hospection/src/utils/constants.dart';
 import 'package:hospection/src/views/hospitals/list_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
+// import 'package:http/http.dart' as http;
 
 class SubmittedSurveyList extends StatefulWidget {
   @override
@@ -14,7 +16,22 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Survey Submissions"),
+        title: Text(
+          "Survey Submissions",
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Constants.prefs.setBool("loggedIn", false);
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          )
+        ],
       ),
       body: ListView(
         children: <Widget>[

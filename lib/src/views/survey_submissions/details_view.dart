@@ -8,7 +8,10 @@ class ShowSurveyDetails extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Survey Details"),
+        title: Text(
+          "Survey Details",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: ListView(
         children: <Widget>[

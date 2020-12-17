@@ -32,7 +32,10 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
               },
             ),
             automaticallyImplyLeading: false,
-            title: Text("Survey Questions"),
+            title: Text(
+              "Survey Questions",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           body: Center(
             child: ListView(
@@ -171,7 +174,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.popAndPushNamed(
+                      Navigator.pushReplacementNamed(
                           context, '/submitted-survey-list');
                     },
                     child: Text('Submit survey'),

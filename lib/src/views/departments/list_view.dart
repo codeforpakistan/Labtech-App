@@ -9,7 +9,10 @@ class DepartmentList extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Department's List"),
+        title: Text(
+          "Department's List",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: ListView(
         children: <Widget>[
