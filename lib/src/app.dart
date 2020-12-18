@@ -16,6 +16,7 @@ class Hosepction extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Century Gothic',
       ),
       home: Constants.prefs.getBool("loggedIn") == true
           ? SubmittedSurveyList()

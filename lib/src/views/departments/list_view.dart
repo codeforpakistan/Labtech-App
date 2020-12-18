@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
-import 'package:hospection/src/views/survey_submissions/create_view.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -24,8 +23,7 @@ class _DepartmentListState extends State<DepartmentList> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    var data = json.decode(response.body);
-    print(response.body);
+    var data = json.decode(utf8.decode(response.bodyBytes));
     return data;
   }
 
@@ -47,7 +45,7 @@ class _DepartmentListState extends State<DepartmentList> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return Center(child: Text("Getting the hospitals list"));
+              return Center(child: Text("Getting the departments list"));
               break;
             case ConnectionState.done:
               if (snapshot.hasError) {
@@ -79,11 +77,6 @@ class _DepartmentListState extends State<DepartmentList> {
           }
         },
       ),
-      // body: ListView(
-      //   children: <Widget>[
-      //
-      //   ],
-      // ),
     );
   }
 

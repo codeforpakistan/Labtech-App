@@ -22,8 +22,7 @@ class _HospitalListState extends State<HospitalList> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    var data = json.decode(response.body);
-    print(response.body);
+    var data = json.decode(utf8.decode(response.bodyBytes));
     return data;
   }
 

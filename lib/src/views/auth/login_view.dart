@@ -15,7 +15,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextStyle style = TextStyle(fontFamily: 'Century Gothic', fontSize: 20.0);
+  TextStyle style = TextStyle(fontSize: 20.0);
   var url = "http://localhost/api/v1/login/access-token";
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
@@ -142,7 +142,11 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
+        print(
+            ">=========================ACCESS TOKEN=========================<");
         print(jsonData['access_token']);
+        print(
+            ">=========================ACCESS TOKEN=========================<");
         Constants.prefs.setString('access_token', jsonData['access_token']);
         Constants.prefs.setBool("loggedIn", true);
         Navigator.pushReplacementNamed(context, '/submitted-survey-list');

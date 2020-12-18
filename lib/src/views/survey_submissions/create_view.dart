@@ -1,4 +1,11 @@
+import 'dart:ffi';
+
+import 'package:hospection/src/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:hospection/src/widgets/switch_widget.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 
 class SubmitSurvey extends StatefulWidget {
   @override
@@ -6,18 +13,38 @@ class SubmitSurvey extends StatefulWidget {
 }
 
 class _SubmitSurveyState extends State<SubmitSurvey> {
-  bool _checkedQ1 = false;
-  bool _checkedQ2 = false;
-  bool _checkedQ3 = false;
-  bool _checkedQ4 = false;
-  bool _checkedQ5 = false;
-  bool _checkedQ6 = false;
-  bool _checkedQ7 = false;
-  bool _checkedQ8 = false;
-  bool _checkedQ9 = false;
-  bool _checkedQ10 = false;
-  bool _checkedQ11 = false;
-  bool _checkedQ12 = false;
+  TextStyle style = TextStyle(fontSize: 20.0);
+  double _latitude, _longitude;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  void _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _latitude = position.latitude;
+    _longitude = position.longitude;
+  }
+
+  Future getSurveyQuestionnaire(hospitalId, departmentId) async {
+    var url =
+        "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
+    var accessToken = Constants.prefs.getString('access_token');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    var data = json.decode(utf8.decode(response.bodyBytes));
+    return data.first['questions'];
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> dataFromDepartmentScreen =
@@ -27,167 +54,82 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              tooltip: "Cancel and Return to List",
-              onPressed: () {
-                Navigator.pop(context, "You didn't submit the survey.");
-              },
-            ),
-            automaticallyImplyLeading: false,
-            title: Text(
-              "Survey Questions",
-              style: TextStyle(color: Colors.white),
-            ),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            tooltip: "Cancel and Return to List",
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/submitted-survey-list', (Route<dynamic> route) => false);
+            },
           ),
-          body: Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                CheckboxListTile(
-                  title:
-                      Text("Is the prompt and safe healthcare being assured?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ1,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ1 = value;
-                    });
+          automaticallyImplyLeading: false,
+          title: Text(
+            "Survey Questions",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        body: FutureBuilder(
+          future: getSurveyQuestionnaire(hospitalId, departmentId),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return Center(child: Text("Getting the survey questionnaire"));
+                break;
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text(
+                          "Some unknown error has occurred, please contact your system administrator"));
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ListTile(
+                        title: Text(
+                          snapshot.data[index]['question'],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        trailing: SwitchWidgetClass(),
+                      ),
+                    );
                   },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Are the patients being facilitated and properly guided at the triage+registration counter?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ2,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ2 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Does the emergency environment support healthy interaction between patient and hospital staff?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ3,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ3 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text("Are the resources being properly utilized?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ4,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ4 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Is the emergency having effective security & transport system?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ5,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ5 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Does the emergency have adequate necessary resuscitation equipment & drugs?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ6,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ6 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Does the emergency have adequate necessary human resources (Doctors, Nurses, Paramedical & support staff) available?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ7,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ7 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Is the staff assigned to the duty in emergency present?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ8,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ8 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Is the emergency clean with proper hospital waste management system?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ9,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ9 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title:
-                      Text("Are the heating and cooling systems functional?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ10,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ10 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text("Is there adequate electrical and water supply?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ11,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ11 = value;
-                    });
-                  },
-                ),
-                CheckboxListTile(
-                  title: Text(
-                      "Are there adequate stretchers & wheelchairs available with adequate storage & maintenance capacity?"),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: _checkedQ12,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _checkedQ12 = value;
-                    });
-                  },
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/submitted-survey-list',
-                          (Route<dynamic> route) => false);
-                    },
-                    child: Text('Submit survey'),
-                  ),
-                )
-              ],
-            ),
-          ));
+                );
+                break;
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+              default:
+                return Center(child: CircularProgressIndicator());
+                break;
+            }
+          },
+        ),
+        // body: ListView(
+        //   shrinkWrap: true,
+        //   children: <Widget>[
+        //     Padding(
+        //       padding: const EdgeInsets.only(left: 60.0, right: 60.0),
+        //       child: Material(
+        //         elevation: 5.0,
+        //         borderRadius: BorderRadius.circular(30.0),
+        //         color: Colors.lightGreen,
+        //         child: MaterialButton(
+        //           minWidth: MediaQuery.of(context).size.width,
+        //           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        //           onPressed: () {},
+        //           child: Text("Submit Survey",
+        //               textAlign: TextAlign.center,
+        //               style: style.copyWith(
+        //                   color: Colors.white, fontWeight: FontWeight.bold)),
+        //         ),
+        //       ),
+        //     )
+        //   ],
+        // ),
+      );
     });
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
-import 'package:hospection/src/views/hospitals/list_view.dart';
-import 'package:hospection/src/views/survey_submissions/details_view.dart';
 // import 'package:http/http.dart' as http;
 
 class SubmittedSurveyList extends StatefulWidget {
