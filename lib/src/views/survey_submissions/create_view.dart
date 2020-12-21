@@ -17,6 +17,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   double _latitude, _longitude;
   List<dynamic> questions;
   dynamic payload;
+  TextEditingController commentController = new TextEditingController();
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url =
@@ -106,12 +107,25 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     this.payload['answers'] = this.questions;
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> dataFromDepartmentScreen =
         ModalRoute.of(context).settings.arguments;
     var hospitalId = dataFromDepartmentScreen['hospital_id'];
     var departmentId = dataFromDepartmentScreen['department_id'];
+
+    final commentField = TextFormField(
+      controller: commentController,
+      style: TextStyle(fontSize: 16.0),
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "Comment",
+        border:
+          OutlineInputBorder(borderRadius: BorderRadius.circular(12.0))),
+    );
+    
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
@@ -202,6 +216,12 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                       ),
                     ),
                     Padding(
+                      padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
+                      child: Material(
+                        child: commentField,
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(
                           top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
                       child: Material(
@@ -212,6 +232,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                           minWidth: MediaQuery.of(context).size.width,
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                           onPressed: () {
+                            this.payload['comment'] = commentController.text;
                             submitSurvey();
                           },
                           child: Text("Submit Survey",
