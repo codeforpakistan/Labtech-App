@@ -82,51 +82,57 @@ class _LoginState extends State<Login> {
     );
     return Scaffold(
       body: Center(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 155.0,
-                  child: Image.asset(
-                    "assets/hospection-logo.png",
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(height: 15.0),
-                Text(
-                  'HOSPECTION',
-                  style: TextStyle(fontSize: 30, fontFamily: 'Century Gothic'),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 45.0),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      emailField,
-                      SizedBox(height: 25.0),
-                      passwordField,
-                      SizedBox(
-                        height: 35.0,
+        child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(36.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 155.0,
+                      child: Image.asset(
+                        "assets/hospection-logo.png",
+                        fit: BoxFit.contain,
                       ),
-                      loginButton,
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 15.0),
+                    Text(
+                      'HOSPECTION',
+                      style: TextStyle(fontSize: 30, fontFamily: 'Century Gothic'),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 45.0),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          emailField,
+                          SizedBox(height: 25.0),
+                          passwordField,
+                          SizedBox(
+                            height: 35.0,
+                          ),
+                          loginButton,
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15.0,
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 15.0,
-                ),
-              ],
-            ),
-          ),
+              ),
+            )
+          ]
         ),
       ),
-    );
+    ));
   }
 
   signIn(String username, String password) async {

@@ -15,23 +15,12 @@ class SubmitSurvey extends StatefulWidget {
 class _SubmitSurveyState extends State<SubmitSurvey> {
   TextStyle style = TextStyle(fontSize: 20.0);
   double _latitude, _longitude;
+  List<dynamic> questions;
+  dynamic payload;
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
-  void _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    _latitude = position.latitude;
-    _longitude = position.longitude;
-  }
-
-  Future getSurveyQuestionnaire(hospitalId, departmentId) async {
+  Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url =
-        "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
+      "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -42,7 +31,79 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       },
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
-    return data.first['questions'];
+    return returnRoot ? data : data.first['questions'];
+  }
+
+  Future getSurveyQuestionnaireForState() async {
+    final Map<String, Object> dataFromDepartmentScreen =
+        ModalRoute.of(context).settings.arguments;
+    var hospitalId = dataFromDepartmentScreen['hospital_id'];
+    var departmentId = dataFromDepartmentScreen['department_id'];
+    var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
+    this.setDefaultAnswers(data.first);
+  }
+
+  void setDefaultAnswers(dynamic data) {
+    var list = data['questions'];
+    list.forEach((element) {
+      if (element.containsKey('sub_questions')) {
+        element['sub_questions'].forEach((sub) {
+          sub['answer'] = false;
+        });
+      } else {
+        element['answer'] = false;
+      }
+    });
+    var payloadFill = {};
+    payloadFill['comment'] = '';
+    payloadFill['answers'] = list;
+    payloadFill['images'] = [];
+    payloadFill['lat'] = this._latitude;
+    payloadFill['lng'] = this._longitude;
+    payloadFill['survey_id'] = data['id'];
+    setState(() => {
+      questions = list,
+      payload = payloadFill,
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      getSurveyQuestionnaireForState();
+    });
+  }
+
+  void _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    _latitude = position.latitude;
+    _longitude = position.longitude;
+  }
+
+  dynamic updateFromChild(bool val, int qid, int sqid) {
+    if (sqid == -1) {
+      // no subquestions..
+      this.questions.forEach((element) {
+        if (element['q_id'] == qid){
+          element['answer'] = val;
+        }
+      });
+    } else {
+      // update subquestion response..
+      this.questions.forEach((element) {
+        if (element['q_id'] == qid){
+          element['sub_questions'].forEach((sub) {
+            if (sub['s_q_id'] == sqid){
+              sub['answer'] = val;
+            }
+          });
+        }
+      });
+    }
+    this.payload['answers'] = this.questions;
   }
 
   @override
@@ -70,7 +131,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
           ),
         ),
         body: FutureBuilder(
-          future: getSurveyQuestionnaire(hospitalId, departmentId),
+          future: getSurveyQuestionnaire(hospitalId, departmentId, false),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -92,6 +153,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                               .containsKey('sub_questions')) {
                             var subQuestions =
                                 snapshot.data[index]['sub_questions'];
+                            var main_qid =
+                                snapshot.data[index]['q_id'];
                             return Column(
                               children: [
                                 Padding(
@@ -117,7 +180,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                             subQuestions[index]['question'],
                                             style: TextStyle(fontSize: 16),
                                           ),
-                                          trailing: SwitchWidgetClass(),
+                                          trailing: SwitchWidgetClass(updateFromChild, main_qid, subQuestions[index]['s_q_id']),
                                         ),
                                       );
                                     }),
@@ -131,7 +194,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                   snapshot.data[index]['question'],
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                trailing: SwitchWidgetClass(),
+                                trailing: SwitchWidgetClass(updateFromChild, snapshot.data[index]['q_id'], -1),
                               ),
                             );
                           }
@@ -148,7 +211,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                         child: MaterialButton(
                           minWidth: MediaQuery.of(context).size.width,
                           padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          onPressed: () {},
+                          onPressed: () {
+                            submitSurvey();
+                          },
                           child: Text("Submit Survey",
                               textAlign: TextAlign.center,
                               style: style.copyWith(
@@ -176,5 +241,30 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
         // ),
       );
     });
+  }
+
+  submitSurvey() async {
+    var accessToken = Constants.prefs.getString('access_token');
+    var url = 'http://18.220.218.41/api/v1/submissions';
+    var data = json.encode(this.payload);
+    var jsonData;
+    var response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: data
+    );
+    if (response.statusCode == 200) {
+      jsonData = json.decode(response.body);
+      setState(() {
+        print(jsonData);
+        Navigator.pushReplacementNamed(context, '/submitted-survey-list');
+      });
+    } else {
+      print('something went wrong');
+      print(response.statusCode);
+    }
   }
 }
