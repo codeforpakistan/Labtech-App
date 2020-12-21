@@ -245,7 +245,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   submitSurvey() async {
     var accessToken = Constants.prefs.getString('access_token');
-    var url = 'http://18.220.218.41/api/v1/submissions';
+    var url = 'http://18.220.218.41/api/v1/submissions/';
     var data = json.encode(this.payload);
     var jsonData;
     var response = await http.post(
@@ -259,7 +259,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
-        print(jsonData);
         Navigator.pushReplacementNamed(context, '/submitted-survey-list');
       });
     } else {
