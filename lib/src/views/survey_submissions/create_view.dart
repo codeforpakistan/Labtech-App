@@ -21,7 +21,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url =
-      "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
+        "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -63,9 +63,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     payloadFill['lng'] = this._longitude;
     payloadFill['survey_id'] = data['id'];
     setState(() => {
-      questions = list,
-      payload = payloadFill,
-    });
+          questions = list,
+          payload = payloadFill,
+        });
   }
 
   @override
@@ -88,16 +88,16 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     if (sqid == -1) {
       // no subquestions..
       this.questions.forEach((element) {
-        if (element['q_id'] == qid){
+        if (element['q_id'] == qid) {
           element['answer'] = val;
         }
       });
     } else {
       // update subquestion response..
       this.questions.forEach((element) {
-        if (element['q_id'] == qid){
+        if (element['q_id'] == qid) {
           element['sub_questions'].forEach((sub) {
-            if (sub['s_q_id'] == sqid){
+            if (sub['s_q_id'] == sqid) {
               sub['answer'] = val;
             }
           });
@@ -106,8 +106,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     }
     this.payload['answers'] = this.questions;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +118,12 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       controller: commentController,
       style: TextStyle(fontSize: 16.0),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        hintText: "Comment",
-        border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(12.0))),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Comment",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12.0))),
     );
-    
+
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
@@ -167,8 +165,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                               .containsKey('sub_questions')) {
                             var subQuestions =
                                 snapshot.data[index]['sub_questions'];
-                            var main_qid =
-                                snapshot.data[index]['q_id'];
+                            var mainQid = snapshot.data[index]['q_id'];
                             return Column(
                               children: [
                                 Padding(
@@ -194,7 +191,10 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                             subQuestions[index]['question'],
                                             style: TextStyle(fontSize: 16),
                                           ),
-                                          trailing: SwitchWidgetClass(updateFromChild, main_qid, subQuestions[index]['s_q_id']),
+                                          trailing: SwitchWidgetClass(
+                                              updateFromChild,
+                                              mainQid,
+                                              subQuestions[index]['s_q_id']),
                                         ),
                                       );
                                     }),
@@ -208,7 +208,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                   snapshot.data[index]['question'],
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                trailing: SwitchWidgetClass(updateFromChild, snapshot.data[index]['q_id'], -1),
+                                trailing: SwitchWidgetClass(updateFromChild,
+                                    snapshot.data[index]['q_id'], -1),
                               ),
                             );
                           }
@@ -216,7 +217,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
+                      padding: const EdgeInsets.only(
+                          top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
                       child: Material(
                         child: commentField,
                       ),
@@ -269,14 +271,12 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     var url = 'http://18.220.218.41/api/v1/submissions/';
     var data = json.encode(this.payload);
     var jsonData;
-    var response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: data
-    );
+    var response = await http.post(url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
