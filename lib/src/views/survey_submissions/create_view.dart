@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'dart:io';
 
 import 'package:hospection/src/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import 'package:hospection/src/widgets/switch_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SubmitSurvey extends StatefulWidget {
   @override
@@ -18,6 +19,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   List<dynamic> questions;
   dynamic payload;
   TextEditingController commentController = new TextEditingController();
+  File imageFile;
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url =
@@ -107,6 +109,65 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     this.payload['answers'] = this.questions;
   }
 
+  _getFromCamera() async {
+      PickedFile pickedFile = await ImagePicker().getImage(
+          source: ImageSource.camera,
+          maxWidth: 1800,
+          maxHeight: 1800,
+      );
+      if (pickedFile != null) {
+        File imageFile = File(pickedFile.path);
+        setState(() {
+          imageFile = File(pickedFile.path);
+        });
+      }
+  }
+
+  _getFromGallery() async {
+    PickedFile pickedFile = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      setState(() {
+        imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _getFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _getFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> dataFromDepartmentScreen =
@@ -136,6 +197,16 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                   '/submitted-survey-list', (Route<dynamic> route) => false);
             },
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.camera),
+              color: Colors.white,
+              tooltip: "Upload image",
+              onPressed: () {
+                _showPicker(context);
+              },
+            ),
+          ],
           automaticallyImplyLeading: false,
           title: Text(
             "Survey Questions",
@@ -223,6 +294,20 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                         child: commentField,
                       ),
                     ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(
+                    //       top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
+                    //   child: Material(
+                    //     child: Container(
+                    //       decoration: new BoxDecoration(
+                    //         image: new DecorationImage(
+                    //           image: new AssetImage("/Users/saqib/Library/Developer/CoreSimulator/Devices/A365C4DF-54DA-4281-8BA5-1EB55AD462AF/data/Containers/Data/Application/8F91D7DA-FF2E-4A14-87CE-845921873813/tmp/image_picker_48983CA4-45C3-476A-A0D6-4CC6575769F8-14235-00000746A1D9DB44.jpg"),
+                    //           fit: BoxFit.cover,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(
                           top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
