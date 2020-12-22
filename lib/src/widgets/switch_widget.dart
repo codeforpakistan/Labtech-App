@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 
 class SwitchWidgetClass extends StatefulWidget {
+  Function(bool val, int qid, int sqid) notifyParent;
+  int qid; //question id
+  int sqid; //sub question id
+  SwitchWidgetClass(this.notifyParent, this.qid, this.sqid);
+
   @override
-  _SwitchWidgetClassState createState() => _SwitchWidgetClassState();
+  _SwitchWidgetClassState createState() => _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
 }
 
 class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
   bool switchControl = false;
-  var textHolder = 'Switch is OFF';
+  Function(bool val, int qid, int sqid) notifyParent;
+  int qid; //question id
+  int sqid; //sub question id
+
+  _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
+  
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -25,21 +35,9 @@ class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
   }
 
   void toggleSwitch(bool value) {
-    if (switchControl == false) {
-      setState(() {
-        switchControl = true;
-        textHolder = 'Switch is ON';
-      });
-      print('Switch is ON');
-      // Put your code here which you want to execute on Switch ON event.
-
-    } else {
-      setState(() {
-        switchControl = false;
-        textHolder = 'Switch is OFF';
-      });
-      print('Switch is OFF');
-      // Put your code here which you want to execute on Switch OFF event.
-    }
+    setState(() {
+      switchControl = !switchControl;
+    });
+    this.notifyParent(switchControl, this.qid, this.sqid);
   }
 }
