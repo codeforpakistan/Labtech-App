@@ -19,7 +19,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   List<dynamic> questions;
   dynamic payload;
   TextEditingController commentController = new TextEditingController();
-  File imageFile;
+  List<File> imageFiles = [];
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url =
@@ -116,9 +116,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
           maxHeight: 1800,
       );
       if (pickedFile != null) {
-        File imageFile = File(pickedFile.path);
         setState(() {
-          imageFile = File(pickedFile.path);
+          imageFiles.add(File(pickedFile.path));
         });
       }
   }
@@ -130,9 +129,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       maxHeight: 1800,
     );
     if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
       setState(() {
-        imageFile = File(pickedFile.path);
+        imageFiles.add(File(pickedFile.path));
       });
     }
   }
@@ -190,6 +188,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
+            color: Colors.white,
             icon: Icon(Icons.arrow_back_ios),
             tooltip: "Cancel and Return to List",
             onPressed: () {
@@ -199,7 +198,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
           ),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.camera),
+              icon: Icon(Icons.add_a_photo),
               color: Colors.white,
               tooltip: "Upload image",
               onPressed: () {
@@ -228,6 +227,25 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                 }
                 return Column(
                   children: [
+                    Container(
+                      height: 120,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(1.0),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: imageFiles.length == 0 ? 1 : imageFiles.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                        imageFiles.length == 0 ?
+                          Padding(
+                            padding: const EdgeInsets.only(top: 50.0),
+                            child: Text("Attach Images (optional)",  style: TextStyle(fontSize: 16))
+                          ) :
+                          Image.file(
+                            imageFiles[index],
+                            fit: BoxFit.fitWidth,
+                          ),
+                      ),
+                    ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: snapshot.data.length,
@@ -294,20 +312,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                         child: commentField,
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(
-                    //       top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
-                    //   child: Material(
-                    //     child: Container(
-                    //       decoration: new BoxDecoration(
-                    //         image: new DecorationImage(
-                    //           image: new AssetImage("/Users/saqib/Library/Developer/CoreSimulator/Devices/A365C4DF-54DA-4281-8BA5-1EB55AD462AF/data/Containers/Data/Application/8F91D7DA-FF2E-4A14-87CE-845921873813/tmp/image_picker_48983CA4-45C3-476A-A0D6-4CC6575769F8-14235-00000746A1D9DB44.jpg"),
-                    //           fit: BoxFit.cover,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Padding(
                       padding: const EdgeInsets.only(
                           top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
