@@ -34,7 +34,7 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          "Survey Submissions",
+          "Submitted Surveys",
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
