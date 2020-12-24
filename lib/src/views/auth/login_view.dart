@@ -143,7 +143,7 @@ class _LoginState extends State<Login> {
     var jsonData;
 
     var response = await http
-        .post("http://18.220.218.41/api/v1/login/access-token", body: data);
+        .post(Constants.BASE_URL + "login/access-token", body: data);
 
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);

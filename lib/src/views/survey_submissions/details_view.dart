@@ -7,7 +7,7 @@ class ShowSurveyDetails extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getSurveyDetailsData(surveyId) async {
-    var url = "http://18.220.218.41/api/v1/submissions/$surveyId";
+    var url = Constants.BASE_URL + "submissions/$surveyId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,

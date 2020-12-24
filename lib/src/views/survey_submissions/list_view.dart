@@ -14,7 +14,7 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getSubmittedSurveysData() async {
-    var url = "http://18.220.218.41/api/v1/submissions/";
+    var url = Constants.BASE_URL + "submissions/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,

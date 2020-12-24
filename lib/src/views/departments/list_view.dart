@@ -13,7 +13,7 @@ class _DepartmentListState extends State<DepartmentList> {
 
   Future getDepartmentData(hospitalId) async {
     var url =
-        "http://18.220.218.41/api/v1/departments/?hospital_id=$hospitalId";
+        Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
