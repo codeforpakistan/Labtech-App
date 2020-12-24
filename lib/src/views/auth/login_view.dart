@@ -81,9 +81,10 @@ class _LoginState extends State<Login> {
       ),
     );
     return Scaffold(
-        body: Center(
-      child: SingleChildScrollView(
-        child: Column(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
@@ -129,10 +130,47 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                 ),
-              )
-            ]),
+              ),
+            ],
+          ),
+        ),
       ),
-    ));
+      extendBody: true,
+      // resizeToAvoidBottomInset: false,
+      bottomNavigationBar: ClipRRect(
+        clipBehavior: Clip.antiAlias,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        child: BottomAppBar(
+          color: Colors.white,
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                "assets/nih-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/gov-of-pk-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/tech-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/cfp-logo.png",
+                height: 100,
+                width: 100,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   signIn(String username, String password) async {
