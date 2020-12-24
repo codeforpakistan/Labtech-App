@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +28,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final emailField = TextFormField(
+      autofocus: true,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your username';
@@ -81,58 +81,96 @@ class _LoginState extends State<Login> {
       ),
     );
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 155.0,
-                      child: Image.asset(
-                        "assets/hospection-logo.png",
-                        fit: BoxFit.contain,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(36.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 155.0,
+                        child: Image.asset(
+                          "assets/hospection-logo.png",
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 15.0),
-                    Text(
-                      'HOSPECTION',
-                      style: TextStyle(fontSize: 30, fontFamily: 'Century Gothic'),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 45.0),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: <Widget>[
-                          emailField,
-                          SizedBox(height: 25.0),
-                          passwordField,
-                          SizedBox(
-                            height: 35.0,
-                          ),
-                          loginButton,
-                        ],
+                      SizedBox(height: 15.0),
+                      Text(
+                        'HOSPECTION',
+                        style: TextStyle(
+                            fontSize: 30, fontFamily: 'Century Gothic'),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                  ],
+                      SizedBox(height: 45.0),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            emailField,
+                            SizedBox(height: 25.0),
+                            passwordField,
+                            SizedBox(
+                              height: 35.0,
+                            ),
+                            loginButton,
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ]
+            ],
+          ),
         ),
       ),
-    ));
+      extendBody: true,
+      // resizeToAvoidBottomInset: false,
+      bottomNavigationBar: ClipRRect(
+        clipBehavior: Clip.antiAlias,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        child: BottomAppBar(
+          color: Colors.white,
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            children: <Widget>[
+              Image.asset(
+                "assets/nih-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/gov-of-pk-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/tech-logo.png",
+                height: 100,
+                width: 100,
+              ),
+              Image.asset(
+                "assets/cfp-logo.png",
+                height: 100,
+                width: 100,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   signIn(String username, String password) async {

@@ -54,6 +54,9 @@ flutter:
   assets:
     - hospection-logo.png
     - nih-logo.png
+    - gov-of-pk-logo.png
+    - tech-logo.png
+    - cfp-logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
