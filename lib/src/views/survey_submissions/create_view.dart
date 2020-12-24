@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:path/path.dart';
+import 'package:async/async.dart';
 
 import 'package:hospection/src/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:toast/toast.dart';
 
 class SubmitSurvey extends StatefulWidget {
   @override
@@ -16,14 +19,14 @@ class SubmitSurvey extends StatefulWidget {
 class _SubmitSurveyState extends State<SubmitSurvey> {
   TextStyle style = TextStyle(fontSize: 20.0);
   double _latitude, _longitude;
-  List<dynamic> questions;
+  List<dynamic> questions = [];
   dynamic payload;
   TextEditingController commentController = new TextEditingController();
   List<File> imageFiles = [];
+  bool processing = false;
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
-    var url =
-        "http://18.220.218.41/api/v1/surveys/?department_id=$departmentId";
+    var url = Constants.BASE_URL + "surveys/?department_id=$departmentId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -39,7 +42,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   Future getSurveyQuestionnaireForState() async {
     final Map<String, Object> dataFromDepartmentScreen =
-        ModalRoute.of(context).settings.arguments;
+        ModalRoute.of(this.context).settings.arguments;
     var hospitalId = dataFromDepartmentScreen['hospital_id'];
     var departmentId = dataFromDepartmentScreen['department_id'];
     var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
@@ -65,9 +68,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     payloadFill['lng'] = this._longitude;
     payloadFill['survey_id'] = data['id'];
     setState(() => {
-          questions = list,
-          payload = payloadFill,
-        });
+      questions = list,
+      payload = payloadFill,
+    });
   }
 
   @override
@@ -110,16 +113,17 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   }
 
   _getFromCamera() async {
-      PickedFile pickedFile = await ImagePicker().getImage(
-          source: ImageSource.camera,
-          maxWidth: 1800,
-          maxHeight: 1800,
-      );
-      if (pickedFile != null) {
-        setState(() {
-          imageFiles.add(File(pickedFile.path));
-        });
-      }
+    PickedFile pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        imageFiles.add(File(pickedFile.path));
+      });
+      await _uploadImage(File(pickedFile.path));
+    }
   }
 
   _getFromGallery() async {
@@ -132,7 +136,41 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       setState(() {
         imageFiles.add(File(pickedFile.path));
       });
+      await _uploadImage(File(pickedFile.path));
     }
+  }
+
+  _uploadImage(File imageFile) async {
+    // upload image and save the name in the survey submission payload.
+    var accessToken = Constants.prefs.getString('access_token');
+    var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    // get file length
+    var length = await imageFile.length();
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + accessToken
+    };
+    var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();;
+    // string to uri
+    var uri = Uri.parse(Constants.BASE_URL + 'utils/uploadimage/');
+    var request = new http.MultipartRequest("POST", uri);
+    var multipartFileSign = new http.MultipartFile(
+      'file', stream,
+      length,
+      filename: timeStamp + basename(imageFile.path)
+    );
+    request.files.add(multipartFileSign);
+    request.headers.addAll(headers);
+    var response = await request.send();
+    // listen for response
+    response.stream.transform(utf8.decoder).listen((value) {
+      var jsonData = json.decode(value);
+      var fileName = jsonData['filename'];
+      setState(() {
+        payload['images'].add(fileName);
+      });
+      print(payload['images']);
+    });
   }
 
   void _showPicker(context) {
@@ -168,11 +206,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, Object> dataFromDepartmentScreen =
-        ModalRoute.of(context).settings.arguments;
-    var hospitalId = dataFromDepartmentScreen['hospital_id'];
-    var departmentId = dataFromDepartmentScreen['department_id'];
-
     final commentField = TextFormField(
       controller: commentController,
       style: TextStyle(fontSize: 16.0),
@@ -184,7 +217,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     );
 
     return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
+      builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -212,154 +245,126 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: FutureBuilder(
-          future: getSurveyQuestionnaire(hospitalId, departmentId, false),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return Center(child: Text("Getting the survey questionnaire"));
-                break;
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Center(
-                      child: Text(
-                          "Some unknown error has occurred, please contact your system administrator"));
-                }
-                return Column(
-                  children: [
-                    Container(
-                      height: 120,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(1.0),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: imageFiles.length == 0 ? 1 : imageFiles.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                        imageFiles.length == 0 ?
-                          Padding(
-                            padding: const EdgeInsets.only(top: 50.0),
-                            child: Text("Attach Images (optional)",  style: TextStyle(fontSize: 16))
-                          ) :
-                          Image.file(
-                            imageFiles[index],
-                            fit: BoxFit.fitWidth,
-                          ),
-                      ),
+        body: questions != null && questions.length > 0 && !processing ?  Column(
+            children: [
+              Container(
+                height: 120,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(1.0),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: imageFiles.length == 0 ? 1 : imageFiles.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                  imageFiles.length == 0 ?
+                    Padding(
+                      padding: const EdgeInsets.only(top: 50.0),
+                      child: Text("Attach Images (optional)",  style: TextStyle(fontSize: 16))
+                    ) :
+                    Image.file(
+                      imageFiles[index],
+                      fit: BoxFit.fitWidth,
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          if (snapshot.data[index]
-                              .containsKey('sub_questions')) {
-                            var subQuestions =
-                                snapshot.data[index]['sub_questions'];
-                            var mainQid = snapshot.data[index]['q_id'];
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5.0),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: questions.length,
+                  itemBuilder: (context, index) {
+                    if (questions[index]
+                        .containsKey('sub_questions')) {
+                      var subQuestions =
+                          questions[index]['sub_questions'];
+                      var mainQid = questions[index]['q_id'];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: ListTile(
+                              title: Text(
+                                questions[index]['question'],
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                              itemCount: subQuestions.length,
+                              physics: ClampingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder:
+                                  (BuildContext context, int index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 20.0),
                                   child: ListTile(
                                     title: Text(
-                                      snapshot.data[index]['question'],
+                                      subQuestions[index]['question'],
                                       style: TextStyle(fontSize: 16),
                                     ),
+                                    trailing: SwitchWidgetClass(
+                                        updateFromChild,
+                                        mainQid,
+                                        subQuestions[index]['s_q_id']),
                                   ),
-                                ),
-                                ListView.builder(
-                                    itemCount: subQuestions.length,
-                                    physics: ClampingScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20.0),
-                                        child: ListTile(
-                                          title: Text(
-                                            subQuestions[index]['question'],
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                          trailing: SwitchWidgetClass(
-                                              updateFromChild,
-                                              mainQid,
-                                              subQuestions[index]['s_q_id']),
-                                        ),
-                                      );
-                                    }),
-                              ],
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: ListTile(
-                                title: Text(
-                                  snapshot.data[index]['question'],
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                trailing: SwitchWidgetClass(updateFromChild,
-                                    snapshot.data[index]['q_id'], -1),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
-                      child: Material(
-                        child: commentField,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
-                      child: Material(
-                        elevation: 5.0,
-                        borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.lightGreen,
-                        child: MaterialButton(
-                          minWidth: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          onPressed: () {
-                            this.payload['comment'] = commentController.text;
-                            submitSurvey();
-                          },
-                          child: Text("Submit Survey",
-                              textAlign: TextAlign.center,
-                              style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
+                                );
+                              }),
+                        ],
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: ListTile(
+                          title: Text(
+                            questions[index]['question'],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          trailing: SwitchWidgetClass(updateFromChild,
+                              questions[index]['q_id'], -1),
                         ),
-                      ),
-                    )
-                  ],
-                );
-                break;
-              case ConnectionState.active:
-              case ConnectionState.waiting:
-              default:
-                return Center(child: CircularProgressIndicator());
-                break;
-            }
-          },
-        ),
-        // body: ListView(
-        //   shrinkWrap: true,
-        //   children: <Widget>[
-        //
-        //   ],
-        // ),
+                      );
+                    }
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
+                child: Material(
+                  child: commentField,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
+                child: Material(
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: Colors.lightGreen,
+                  child: MaterialButton(
+                    minWidth: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    onPressed: () {
+                      this.payload['comment'] = commentController.text;
+                      submitSurvey();
+                    },
+                    child: Text("Submit Survey",
+                        textAlign: TextAlign.center,
+                        style: style.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              )
+            ],
+          ) : Center(child: CircularProgressIndicator())
       );
     });
   }
 
   submitSurvey() async {
     var accessToken = Constants.prefs.getString('access_token');
-    var url = 'http://18.220.218.41/api/v1/submissions/';
+    var url = Constants.BASE_URL + 'submissions/';
     var data = json.encode(this.payload);
-    var jsonData;
+    this.processing = true;
     var response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
@@ -367,12 +372,18 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
         },
         body: data);
     if (response.statusCode == 200) {
-      jsonData = json.decode(response.body);
+      this.processing = false;
+      Toast.show("Survey submitted!", this.context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      // var jsonData = json.decode(response.body);
       setState(() {
-        Navigator.pushReplacementNamed(context, '/submitted-survey-list');
+        Navigator.pushReplacementNamed(this.context, '/submitted-survey-list');
       });
     } else {
+      this.processing = false;
       print('something went wrong');
+      Toast.show("Server Error", this.context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       print(response.statusCode);
     }
   }

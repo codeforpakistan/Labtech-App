@@ -12,7 +12,7 @@ class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getHospitalData() async {
-    var url = "http://18.220.218.41/api/v1/hospitals/";
+    var url = Constants.BASE_URL + "hospitals/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
