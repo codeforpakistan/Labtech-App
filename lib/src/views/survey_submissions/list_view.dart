@@ -3,6 +3,8 @@ import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class SubmittedSurveyList extends StatefulWidget {
   @override
   _SubmittedSurveyListState createState() => _SubmittedSurveyListState();
@@ -64,15 +66,22 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.file_copy),
-                    title: Text("Survey ${snapshot.data[index]['id']}"),
-                    subtitle:
-                        Text("Remarks: ${snapshot.data[index]["comment"]}"),
-                    onTap: () {
-                      _navigateAndDisplaySurvey(
-                          context, snapshot.data[index]["id"]);
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: ListTile(
+                      leading: Icon(Icons.file_copy),
+                      title: Text(
+                          "${snapshot.data[index]['department']} - ${snapshot.data[index]['hospital']}"),
+                      subtitle: Text(new DateFormat.yMMMMEEEEd().format(
+                              DateTime.parse(
+                                  snapshot.data[index]['created_date'])) +
+                          "\n" +
+                          snapshot.data[index]['comment']),
+                      onTap: () {
+                        _navigateAndDisplaySurvey(
+                            context, snapshot.data[index]["id"]);
+                      },
+                    ),
                   );
                 },
               );

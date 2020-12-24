@@ -7,7 +7,8 @@ class SwitchWidgetClass extends StatefulWidget {
   SwitchWidgetClass(this.notifyParent, this.qid, this.sqid);
 
   @override
-  _SwitchWidgetClassState createState() => _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
+  _SwitchWidgetClassState createState() =>
+      _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
 }
 
 class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
@@ -17,7 +18,7 @@ class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
   int sqid; //sub question id
 
   _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -26,10 +27,10 @@ class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
           child: Switch(
             onChanged: toggleSwitch,
             value: switchControl,
-            activeColor: Colors.blue,
-            activeTrackColor: Colors.green,
+            activeColor: Colors.lightGreen,
+            activeTrackColor: Colors.lightGreen[200],
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: Colors.grey,
+            inactiveTrackColor: Colors.grey[300],
           )),
     ]);
   }
