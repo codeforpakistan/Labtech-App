@@ -24,6 +24,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   TextEditingController commentController = new TextEditingController();
   List<File> imageFiles = [];
   bool processing = false;
+  bool isLoading = true;
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url = Constants.BASE_URL + "surveys/?department_id=$departmentId";
@@ -325,35 +326,52 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
-                      child: Material(
-                        child: commentField,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
-                      child: Material(
-                        elevation: 5.0,
-                        borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.lightGreen,
-                        child: MaterialButton(
-                          minWidth: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                          onPressed: () {
-                            this.payload['comment'] = commentController.text;
-                            submitSurvey();
-                          },
-                          child: Text("Submit Survey",
-                              textAlign: TextAlign.center,
-                              style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                    )
+                    isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10.0,
+                                left: 20.0,
+                                right: 20.0,
+                                bottom: 0.0),
+                            child: Material(
+                              child: commentField,
+                            ),
+                          )
+                        : Center(),
+                    isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20.0,
+                                left: 60.0,
+                                right: 60.0,
+                                bottom: 40.0),
+                            child: Material(
+                              elevation: 5.0,
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Colors.lightGreen,
+                              child: MaterialButton(
+                                minWidth: MediaQuery.of(context).size.width,
+                                padding:
+                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                onPressed: () {
+                                  this.payload['comment'] =
+                                      commentController.text;
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  submitSurvey();
+                                },
+                                child: Text("Submit Survey",
+                                    textAlign: TextAlign.center,
+                                    style: style.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: CircularProgressIndicator(),
+                          ),
                   ],
                 )
               : Center(child: CircularProgressIndicator()));
