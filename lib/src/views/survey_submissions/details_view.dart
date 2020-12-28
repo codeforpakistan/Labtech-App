@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'dart:convert';
@@ -47,48 +48,111 @@ class ShowSurveyDetails extends StatelessWidget {
                     child: Text(
                         "Some unknown error has occurred, please contact your system administrator"));
               }
-              return ListView.builder(
-                itemCount: snapshot.data['answers'].length,
-                itemBuilder: (context, index) {
-                  if (snapshot.data['answers'][index]
-                      .containsKey('sub_questions')) {
-                    var subQuestions =
-                        snapshot.data['answers'][index]['sub_questions'];
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading:
-                              Icon(Icons.check_box, color: Colors.grey[200]),
-                          title:
-                              Text(snapshot.data['answers'][index]['question']),
-                        ),
-                        ListView.builder(
-                            itemCount: subQuestions.length,
-                            physics: ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 50.0),
-                                child: ListTile(
-                                  leading: subQuestions[index]["answer"]
-                                      ? Icon(Icons.check,
-                                          color: Colors.lightGreen)
-                                      : Icon(Icons.close, color: Colors.red),
-                                  title: Text(subQuestions[index]['question']),
+              final List<Widget> imageSliders = snapshot.data['images']
+                  .map<Widget>((item) => Container(
+                        margin: EdgeInsets.all(5.0),
+                        child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0)),
+                            child: Stack(
+                              children: <Widget>[
+                                Image.network(
+                                    Constants.BASE_URL + "utils/image/" + item,
+                                    fit: BoxFit.cover,
+                                    width: 1000.0),
+                                Positioned(
+                                  bottom: 0.0,
+                                  left: 0.0,
+                                  right: 0.0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(200, 0, 0, 0),
+                                          Color.fromARGB(0, 0, 0, 0)
+                                        ],
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                      ),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 20.0),
+                                    child: Text(
+                                      'No. ${snapshot.data['images'].indexOf(item) + 1} image',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              );
-                            }),
-                      ],
-                    );
-                  } else {
-                    return ListTile(
-                      leading: snapshot.data['answers'][index]["answer"]
-                          ? Icon(Icons.check, color: Colors.lightGreen)
-                          : Icon(Icons.close, color: Colors.red),
-                      title: Text(snapshot.data['answers'][index]["question"]),
-                    );
-                  }
-                },
+                              ],
+                            )),
+                      ))
+                  .toList();
+              return Column(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      aspectRatio: 2.0,
+                      enlargeCenterPage: true,
+                      pageViewKey: PageStorageKey<String>('carousel_slider'),
+                    ),
+                    items: imageSliders,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data['answers'].length,
+                      itemBuilder: (context, index) {
+                        if (snapshot.data['answers'][index]
+                            .containsKey('sub_questions')) {
+                          var subQuestions =
+                              snapshot.data['answers'][index]['sub_questions'];
+                          return Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.check_box,
+                                    color: Colors.grey[200]),
+                                title: Text(snapshot.data['answers'][index]
+                                    ['question']),
+                              ),
+                              ListView.builder(
+                                  itemCount: subQuestions.length,
+                                  physics: ClampingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 50.0),
+                                      child: ListTile(
+                                        leading: subQuestions[index]["answer"]
+                                            ? Icon(Icons.check,
+                                                color: Colors.lightGreen)
+                                            : Icon(Icons.close,
+                                                color: Colors.red),
+                                        title: Text(
+                                            subQuestions[index]['question']),
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          );
+                        } else {
+                          return ListTile(
+                            leading: snapshot.data['answers'][index]["answer"]
+                                ? Icon(Icons.check, color: Colors.lightGreen)
+                                : Icon(Icons.close, color: Colors.red),
+                            title: Text(
+                                snapshot.data['answers'][index]["question"]),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               );
               break;
             case ConnectionState.active:
@@ -99,20 +163,6 @@ class ShowSurveyDetails extends StatelessWidget {
           }
         },
       ),
-      // body: ListView(
-      //   children: <Widget>[
-      //     ListTile(
-      //       leading: Icon(Icons.local_hospital),
-      //       title: Text('Polyclinic Hospital'),
-      //       subtitle: Text("Emergency Department"),
-      //       trailing: Text("9th December, 2020"),
-      //     ),
-      //     ListTile(
-      //       leading: Icon(Icons.check, color: Colors.lightGreen),
-      //       title: Text('Is the prompt and safe healthcare being assured?'),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
