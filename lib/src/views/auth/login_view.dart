@@ -152,22 +152,22 @@ class _LoginState extends State<Login> {
             children: <Widget>[
               Image.asset(
                 "assets/nih-logo.png",
-                height: queryData.size.height / 4,
+                height: queryData.size.width / 4,
                 width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/gov-of-pk-logo.png",
-                height: queryData.size.height / 4,
+                height: queryData.size.width / 4,
                 width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/tech-logo.png",
-                height: queryData.size.height / 4,
+                height: queryData.size.width / 4,
                 width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/cfp-logo.png",
-                height: queryData.size.height / 4,
+                height: queryData.size.width / 4,
                 width: queryData.size.width / 4,
               ),
             ],
@@ -190,11 +190,6 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
-        print(
-            ">=========================ACCESS TOKEN=========================<");
-        print(jsonData['access_token']);
-        print(
-            ">=========================ACCESS TOKEN=========================<");
         Constants.prefs.setString('access_token', jsonData['access_token']);
         Constants.prefs.setBool("loggedIn", true);
         Navigator.pushReplacementNamed(context, '/submitted-survey-list');
