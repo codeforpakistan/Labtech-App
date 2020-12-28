@@ -52,17 +52,27 @@ class _HospitalListState extends State<HospitalList> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ListTile(
-                      leading: Icon(Icons.medical_services),
-                      title: Text(snapshot.data[index]['name']),
-                      subtitle:
-                          Text("Address: ${snapshot.data[index]["address"]}"),
-                      onTap: () {
-                        _navigateAndDisplaySurvey(
-                            context, snapshot.data[index]["id"]);
-                      },
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.3,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ListTile(
+                        leading: Icon(Icons.medical_services),
+                        title: Text(snapshot.data[index]['name']),
+                        subtitle:
+                            Text("Address: ${snapshot.data[index]["address"]}"),
+                        onTap: () {
+                          _navigateAndDisplaySurvey(
+                              context, snapshot.data[index]["id"]);
+                        },
+                      ),
                     ),
                   );
                 },

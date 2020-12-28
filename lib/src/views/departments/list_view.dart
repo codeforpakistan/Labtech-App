@@ -12,8 +12,7 @@ class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getDepartmentData(hospitalId) async {
-    var url =
-        Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
+    var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -56,15 +55,25 @@ class _DepartmentListState extends State<DepartmentList> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.medical_services),
-                    title: Text(snapshot.data[index]['name']),
-                    onTap: () {
-                      _navigateAndDisplaySurvey(
-                          context,
-                          snapshot.data[index]["hospital_id"],
-                          snapshot.data[index]["id"]);
-                    },
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.3,
+                        ),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.medical_services),
+                      title: Text(snapshot.data[index]['name']),
+                      onTap: () {
+                        _navigateAndDisplaySurvey(
+                            context,
+                            snapshot.data[index]["hospital_id"],
+                            snapshot.data[index]["id"]);
+                      },
+                    ),
                   );
                 },
               );

@@ -66,21 +66,31 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ListTile(
-                      leading: Icon(Icons.file_copy),
-                      title: Text(
-                          "${snapshot.data[index]['department']} - ${snapshot.data[index]['hospital']}"),
-                      subtitle: Text(new DateFormat.yMMMMEEEEd().format(
-                              DateTime.parse(
-                                  snapshot.data[index]['created_date'])) +
-                          "\n" +
-                          snapshot.data[index]['comment']),
-                      onTap: () {
-                        _navigateAndDisplaySurvey(
-                            context, snapshot.data[index]["id"]);
-                      },
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey,
+                          width: 0.3,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: ListTile(
+                        leading: Icon(Icons.file_copy),
+                        title: Text(
+                            "${snapshot.data[index]['department']} - ${snapshot.data[index]['hospital']}"),
+                        subtitle: Text(new DateFormat.yMMMMEEEEd().format(
+                                DateTime.parse(
+                                    snapshot.data[index]['created_date'])) +
+                            "\n" +
+                            snapshot.data[index]['comment']),
+                        onTap: () {
+                          _navigateAndDisplaySurvey(
+                              context, snapshot.data[index]["id"]);
+                        },
+                      ),
                     ),
                   );
                 },
@@ -94,26 +104,6 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
           }
         },
       ),
-      // body: ListView(
-      //   children: <Widget>[
-      //     ListTile(
-      //       leading: Icon(Icons.file_copy),
-      //       title: Text('Polyclinic Hospital'),
-      //       subtitle: Text("16th December, 2020"),
-      //       onTap: () {
-      //         _navigateAndDisplaySurvey(context);
-      //       },
-      //     ),
-      //     ListTile(
-      //       leading: Icon(Icons.file_copy),
-      //       title: Text('Polyclinic Hospital'),
-      //       subtitle: Text("9th December, 2020"),
-      //       onTap: () {
-      //         _navigateAndDisplaySurvey(context);
-      //       },
-      //     ),
-      //   ],
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/hospital-list');

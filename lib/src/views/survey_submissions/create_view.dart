@@ -68,9 +68,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     payloadFill['lng'] = this._longitude;
     payloadFill['survey_id'] = data['id'];
     setState(() => {
-      questions = list,
-      payload = payloadFill,
-    });
+          questions = list,
+          payload = payloadFill,
+        });
   }
 
   @override
@@ -143,22 +143,21 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   _uploadImage(File imageFile) async {
     // upload image and save the name in the survey submission payload.
     var accessToken = Constants.prefs.getString('access_token');
-    var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    var stream =
+        new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
     // get file length
     var length = await imageFile.length();
     Map<String, String> headers = {
       "Accept": "application/json",
       "Authorization": "Bearer " + accessToken
     };
-    var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();;
+    var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    ;
     // string to uri
     var uri = Uri.parse(Constants.BASE_URL + 'utils/uploadimage/');
     var request = new http.MultipartRequest("POST", uri);
-    var multipartFileSign = new http.MultipartFile(
-      'file', stream,
-      length,
-      filename: timeStamp + basename(imageFile.path)
-    );
+    var multipartFileSign = new http.MultipartFile('file', stream, length,
+        filename: timeStamp + basename(imageFile.path));
     request.files.add(multipartFileSign);
     request.headers.addAll(headers);
     var response = await request.send();
@@ -175,33 +174,33 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   void _showPicker(context) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
-                      onTap: () {
-                        _getFromGallery();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.photo_library),
+                    title: new Text('Photo Library'),
                     onTap: () {
-                      _getFromCamera();
+                      _getFromGallery();
                       Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
+                    }),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    _getFromCamera();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ),
-          );
-        }
-      );
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -217,146 +216,147 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     );
 
     return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
+        builder: (BuildContext context, StateSetter setState) {
       return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            color: Colors.white,
-            icon: Icon(Icons.arrow_back_ios),
-            tooltip: "Cancel and Return to List",
-            onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/submitted-survey-list', (Route<dynamic> route) => false);
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add_a_photo),
+          appBar: AppBar(
+            leading: IconButton(
               color: Colors.white,
-              tooltip: "Upload image",
+              icon: Icon(Icons.arrow_back_ios),
+              tooltip: "Cancel and Return to List",
               onPressed: () {
-                _showPicker(context);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/submitted-survey-list', (Route<dynamic> route) => false);
               },
             ),
-          ],
-          automaticallyImplyLeading: false,
-          title: Text(
-            "Survey Questions",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        body: questions != null && questions.length > 0 && !processing ?  Column(
-            children: [
-              Container(
-                height: 120,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(1.0),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: imageFiles.length == 0 ? 1 : imageFiles.length,
-                  itemBuilder: (BuildContext context, int index) =>
-                  imageFiles.length == 0 ?
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50.0),
-                      child: Text("Attach Images (optional)",  style: TextStyle(fontSize: 16))
-                    ) :
-                    Image.file(
-                      imageFiles[index],
-                      fit: BoxFit.fitWidth,
-                    ),
-                ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add_a_photo),
+                color: Colors.white,
+                tooltip: "Upload image",
+                onPressed: () {
+                  _showPicker(context);
+                },
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: questions.length,
-                  itemBuilder: (context, index) {
-                    if (questions[index]
-                        .containsKey('sub_questions')) {
-                      var subQuestions =
-                          questions[index]['sub_questions'];
-                      var mainQid = questions[index]['q_id'];
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
-                            child: ListTile(
-                              title: Text(
-                                questions[index]['question'],
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ),
-                          ListView.builder(
-                              itemCount: subQuestions.length,
-                              physics: ClampingScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder:
-                                  (BuildContext context, int index) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 20.0),
+            ],
+            automaticallyImplyLeading: false,
+            title: Text(
+              "Survey Questions",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          body: questions != null && questions.length > 0 && !processing
+              ? Column(
+                  children: [
+                    Container(
+                      height: 120,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(1.0),
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            imageFiles.length == 0 ? 1 : imageFiles.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            imageFiles.length == 0
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 50.0),
+                                    child: Text("Attach Images (optional)",
+                                        style: TextStyle(fontSize: 16)))
+                                : Image.file(
+                                    imageFiles[index],
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: questions.length,
+                        itemBuilder: (context, index) {
+                          if (questions[index].containsKey('sub_questions')) {
+                            var subQuestions =
+                                questions[index]['sub_questions'];
+                            var mainQid = questions[index]['q_id'];
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5.0),
                                   child: ListTile(
                                     title: Text(
-                                      subQuestions[index]['question'],
+                                      questions[index]['question'],
                                       style: TextStyle(fontSize: 16),
                                     ),
-                                    trailing: SwitchWidgetClass(
-                                        updateFromChild,
-                                        mainQid,
-                                        subQuestions[index]['s_q_id']),
                                   ),
-                                );
-                              }),
-                        ],
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: ListTile(
-                          title: Text(
-                            questions[index]['question'],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          trailing: SwitchWidgetClass(updateFromChild,
-                              questions[index]['q_id'], -1),
+                                ),
+                                ListView.builder(
+                                    itemCount: subQuestions.length,
+                                    physics: ClampingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20.0),
+                                        child: ListTile(
+                                          title: Text(
+                                            subQuestions[index]['question'],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          trailing: SwitchWidgetClass(
+                                              updateFromChild,
+                                              mainQid,
+                                              subQuestions[index]['s_q_id']),
+                                        ),
+                                      );
+                                    }),
+                              ],
+                            );
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: ListTile(
+                                title: Text(
+                                  questions[index]['question'],
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                trailing: SwitchWidgetClass(updateFromChild,
+                                    questions[index]['q_id'], -1),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
+                      child: Material(
+                        child: commentField,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
+                      child: Material(
+                        elevation: 5.0,
+                        borderRadius: BorderRadius.circular(30.0),
+                        color: Colors.lightGreen,
+                        child: MaterialButton(
+                          minWidth: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          onPressed: () {
+                            this.payload['comment'] = commentController.text;
+                            submitSurvey();
+                          },
+                          child: Text("Submit Survey",
+                              textAlign: TextAlign.center,
+                              style: style.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
                         ),
-                      );
-                    }
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10.0, left: 20.0, right: 20.0, bottom: 0.0),
-                child: Material(
-                  child: commentField,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 20.0, left: 60.0, right: 60.0, bottom: 40.0),
-                child: Material(
-                  elevation: 5.0,
-                  borderRadius: BorderRadius.circular(30.0),
-                  color: Colors.lightGreen,
-                  child: MaterialButton(
-                    minWidth: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                    onPressed: () {
-                      this.payload['comment'] = commentController.text;
-                      submitSurvey();
-                    },
-                    child: Text("Submit Survey",
-                        textAlign: TextAlign.center,
-                        style: style.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              )
-            ],
-          ) : Center(child: CircularProgressIndicator())
-      );
+                      ),
+                    )
+                  ],
+                )
+              : Center(child: CircularProgressIndicator()));
     });
   }
 
