@@ -93,14 +93,18 @@ class ShowSurveyDetails extends StatelessWidget {
                   .toList();
               return Column(
                 children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      aspectRatio: 2.0,
-                      enlargeCenterPage: true,
-                      pageViewKey: PageStorageKey<String>('carousel_slider'),
-                    ),
-                    items: imageSliders,
-                  ),
+                  snapshot.data['images'].length > 0
+                      ? CarouselSlider(
+                          options: CarouselOptions(
+                            aspectRatio: 2.0,
+                            enlargeCenterPage: true,
+                            enableInfiniteScroll: false,
+                            pageViewKey:
+                                PageStorageKey<String>('carousel_slider'),
+                          ),
+                          items: imageSliders,
+                        )
+                      : Center(),
                   Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
