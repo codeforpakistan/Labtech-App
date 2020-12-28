@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,6 +15,14 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getSubmittedSurveysData() async {
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (isLocationServiceEnabled) {
+      print(isLocationServiceEnabled);
+    } else {
+      await Geolocator.requestPermission();
+    }
+
     var url = Constants.BASE_URL + "submissions/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(

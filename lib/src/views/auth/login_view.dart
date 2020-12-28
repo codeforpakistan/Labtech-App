@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,6 +23,7 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    fetchLocation();
     super.initState();
   }
 
@@ -80,6 +82,8 @@ class _LoginState extends State<Login> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -148,23 +152,23 @@ class _LoginState extends State<Login> {
             children: <Widget>[
               Image.asset(
                 "assets/nih-logo.png",
-                height: 100,
-                width: 100,
+                height: queryData.size.height / 4,
+                width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/gov-of-pk-logo.png",
-                height: 100,
-                width: 100,
+                height: queryData.size.height / 4,
+                width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/tech-logo.png",
-                height: 100,
-                width: 100,
+                height: queryData.size.height / 4,
+                width: queryData.size.width / 4,
               ),
               Image.asset(
                 "assets/cfp-logo.png",
-                height: 100,
-                width: 100,
+                height: queryData.size.height / 4,
+                width: queryData.size.width / 4,
               ),
             ],
           ),
@@ -180,8 +184,8 @@ class _LoginState extends State<Login> {
     };
     var jsonData;
 
-    var response = await http
-        .post(Constants.BASE_URL + "login/access-token", body: data);
+    var response =
+        await http.post(Constants.BASE_URL + "login/access-token", body: data);
 
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
@@ -200,6 +204,16 @@ class _LoginState extends State<Login> {
       setState(() {
         _loginFailed = true;
       });
+    }
+  }
+
+  void fetchLocation() async {
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (isLocationServiceEnabled) {
+      print(isLocationServiceEnabled);
+    } else {
+      await Geolocator.requestPermission();
     }
   }
 }
