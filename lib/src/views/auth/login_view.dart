@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 
 class Login extends StatefulWidget {
   Login({Key key, this.title}) : super(key: key);
@@ -139,60 +141,39 @@ class _LoginState extends State<Login> {
           ),
         ),
       ),
-      extendBody: true,
-      // resizeToAvoidBottomInset: false,
-      bottomNavigationBar: ClipRRect(
-        clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
-        child: BottomAppBar(
-          color: Colors.white,
-          shape: CircularNotchedRectangle(),
-          child: Row(
-            children: <Widget>[
-              Image.asset(
-                "assets/nih-logo.png",
-                height: queryData.size.width / 4,
-                width: queryData.size.width / 4,
-              ),
-              Image.asset(
-                "assets/gov-of-pk-logo.png",
-                height: queryData.size.width / 4,
-                width: queryData.size.width / 4,
-              ),
-              Image.asset(
-                "assets/tech-logo.png",
-                height: queryData.size.width / 4,
-                width: queryData.size.width / 4,
-              ),
-              Image.asset(
-                "assets/cfp-logo.png",
-                height: queryData.size.width / 4,
-                width: queryData.size.width / 4,
-              ),
-            ],
-          ),
-        ),
-      ),
+      extendBody: true
     );
   }
 
+  _checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('connected');
+      }
+    } on SocketException catch (_) {
+      Toast.show("No internet access", this.context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+    }
+  }
+
   signIn(String username, String password) async {
+    setState(() {
+        _loginFailed = false;
+      });
     Map data = {
       'username': username,
       'password': password,
     };
+    _checkInternetConnection();
     var jsonData;
-
-    var response =
-        await http.post(Constants.BASE_URL + "login/access-token", body: data);
-
+    var response = await http.post(Constants.BASE_URL + "login/access-token", body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {
         Constants.prefs.setString('access_token', jsonData['access_token']);
         Constants.prefs.setBool("loggedIn", true);
-        Navigator.pushReplacementNamed(context, '/submitted-survey-list');
+        Navigator.pushReplacementNamed(context, '/home');
       });
     } else {
       // var errorData = json.decode(response.body);
@@ -204,7 +185,6 @@ class _LoginState extends State<Login> {
 
   void fetchLocation() async {
     bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-
     if (isLocationServiceEnabled) {
       print(isLocationServiceEnabled);
     } else {

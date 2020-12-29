@@ -30,12 +30,6 @@ class _HospitalListState extends State<HospitalList> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          "Hospital's List",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
       body: FutureBuilder(
         future: getHospitalData(),
         builder: (context, snapshot) {

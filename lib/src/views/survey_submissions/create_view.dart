@@ -77,17 +77,21 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _setCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getSurveyQuestionnaireForState();
     });
   }
 
-  void _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    _latitude = position.latitude;
-    _longitude = position.longitude;
+  // read location from shared preferences 
+  void _setCurrentLocation() async {
+    _latitude = Constants.prefs.getDouble('latitude');
+    _longitude = Constants.prefs.getDouble('longitude');
+    if (_latitude == null) {
+      print('location Not provided');
+      _latitude =  0;
+      _longitude =  0;
+    }
   }
 
   dynamic updateFromChild(bool val, int qid, int sqid) {
@@ -142,6 +146,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   }
 
   _uploadImage(File imageFile) async {
+    this.processing = true;
     // upload image and save the name in the survey submission payload.
     var accessToken = Constants.prefs.getString('access_token');
     var stream =
@@ -171,6 +176,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       });
       print(payload['images']);
     });
+    this.processing = false;
   }
 
   void _showPicker(context) {
@@ -226,7 +232,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
               tooltip: "Cancel and Return to List",
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/submitted-survey-list', (Route<dynamic> route) => false);
+                    '/home', (Route<dynamic> route) => false);
               },
             ),
             actions: <Widget>[
@@ -378,10 +384,17 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     });
   }
 
+  void printWrapped(String text) {
+    final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
   submitSurvey() async {
     var accessToken = Constants.prefs.getString('access_token');
     var url = Constants.BASE_URL + 'submissions/';
     var data = json.encode(this.payload);
+    print("datadatadatadatadatq");
+    printWrapped(data);
     this.processing = true;
     var response = await http.post(url,
         headers: {
@@ -395,7 +408,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       // var jsonData = json.decode(response.body);
       setState(() {
-        Navigator.pushReplacementNamed(this.context, '/submitted-survey-list');
+        Navigator.pushReplacementNamed(this.context, '/home');
       });
     } else {
       this.processing = false;

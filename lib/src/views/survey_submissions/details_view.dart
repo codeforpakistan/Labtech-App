@@ -45,8 +45,8 @@ class ShowSurveyDetails extends StatelessWidget {
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
-                    child: Text(
-                        "Some unknown error has occurred, please contact your system administrator"));
+                  child: Text(
+                      "Some unknown error has occurred, please contact your system administrator"));
               }
               final List<Widget> imageSliders = snapshot.data['images']
                   .map<Widget>((item) => Container(
@@ -78,7 +78,7 @@ class ShowSurveyDetails extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 20.0),
                                     child: Text(
-                                      'No. ${snapshot.data['images'].indexOf(item) + 1} image',
+                                      '${snapshot.data['images'].indexOf(item) + 1}',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,

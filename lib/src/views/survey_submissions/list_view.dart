@@ -38,27 +38,24 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+
+  void _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    Constants.prefs.setDouble('latitude', position.latitude);
+    Constants.prefs.setDouble('longitude', position.longitude);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          "Submitted Surveys",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Constants.prefs.setBool("loggedIn", false);
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          )
-        ],
-      ),
+     
       body: FutureBuilder(
         future: getSubmittedSurveysData(),
         builder: (context, snapshot) {
@@ -113,14 +110,14 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/hospital-list');
-        },
-        child: Icon(Icons.edit),
-        backgroundColor: Colors.lightGreen,
-        foregroundColor: Colors.white,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/hospital-list');
+      //   },
+      //   child: Icon(Icons.edit),
+      //   backgroundColor: Colors.lightGreen,
+      //   foregroundColor: Colors.white,
+      // ),
     );
   }
 

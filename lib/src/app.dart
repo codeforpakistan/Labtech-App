@@ -6,6 +6,7 @@ import 'package:hospection/src/views/hospitals/list_view.dart';
 import 'package:hospection/src/views/survey_submissions/create_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
+import 'package:hospection/src/views/tabs/tab_view.dart';
 
 class Hosepction extends StatelessWidget {
   // This widget is the root of your application.
@@ -19,10 +20,11 @@ class Hosepction extends StatelessWidget {
         fontFamily: 'Century Gothic',
       ),
       home: Constants.prefs.getBool("loggedIn") == true
-          ? SubmittedSurveyList()
+          ? TabView()
           : Login(),
       routes: {
         '/login': (context) => Login(),
+        '/home': (context) => TabView(),
         '/submitted-survey-list': (context) => SubmittedSurveyList(),
         '/show-survey-details': (context) => ShowSurveyDetails(),
         '/hospital-list': (context) => HospitalList(),
