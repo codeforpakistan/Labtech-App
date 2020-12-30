@@ -40,8 +40,8 @@ class _HospitalListState extends State<HospitalList> {
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
-                    child: Text(
-                        "Some unknown error has occurred, please contact your system administrator"));
+                  child: Text(
+                    "Some unknown error has occurred, please contact your system administrator"));
               }
               return ListView.builder(
                 itemCount: snapshot.data.length,

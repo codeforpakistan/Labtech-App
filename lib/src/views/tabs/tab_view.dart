@@ -41,10 +41,10 @@ class TabView extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         WidgetSpan(
-                          child: Icon(Icons.file_copy, size: 16, color: Colors.white),
+                          child: Icon(Icons.post_add, size: 16, color: Colors.white),
                         ),
                         TextSpan(
-                          text: " Submitted Surveys",
+                          text: " Conduct a survey",
                           style: TextStyle(fontFamily: "BarlowBold", color: Colors.white),
                         ),
                       ],
@@ -56,10 +56,10 @@ class TabView extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         WidgetSpan(
-                          child: Icon(Icons.local_hospital, size: 16, color: Colors.white),
+                          child: Icon(Icons.file_copy, size: 16, color: Colors.white),
                         ),
                         TextSpan(
-                          text: " Hospitals",
+                          text: " Submitted Surveys",
                           style: TextStyle(fontFamily: "BarlowBold", color: Colors.white),
                         ),
                       ],
@@ -75,8 +75,8 @@ class TabView extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              SubmittedSurveyList(),
               HospitalList(),
+              SubmittedSurveyList(),
             ],
           ),
         ),
