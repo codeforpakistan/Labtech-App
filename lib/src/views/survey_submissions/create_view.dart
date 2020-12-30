@@ -310,7 +310,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                           trailing: SwitchWidgetClass(
                                               updateFromChild,
                                               mainQid,
-                                              subQuestions[index]['s_q_id']),
+                                              subQuestions[index]['s_q_id'],
+                                              subQuestions[index]['answer']
+                                            ),
                                         ),
                                       );
                                     }),
@@ -324,8 +326,12 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                   questions[index]['question'],
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                trailing: SwitchWidgetClass(updateFromChild,
-                                    questions[index]['q_id'], -1),
+                                trailing: SwitchWidgetClass(
+                                  updateFromChild,
+                                  questions[index]['q_id'],
+                                  -1,
+                                  questions[index]['answer'],
+                                ),
                               ),
                             );
                           }
@@ -393,7 +399,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     var accessToken = Constants.prefs.getString('access_token');
     var url = Constants.BASE_URL + 'submissions/';
     var data = json.encode(this.payload);
-    print("datadatadatadatadatq");
     printWrapped(data);
     this.processing = true;
     var response = await http.post(url,

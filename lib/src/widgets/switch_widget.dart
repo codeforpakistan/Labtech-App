@@ -4,20 +4,29 @@ class SwitchWidgetClass extends StatefulWidget {
   Function(bool val, int qid, int sqid) notifyParent;
   int qid; //question id
   int sqid; //sub question id
-  SwitchWidgetClass(this.notifyParent, this.qid, this.sqid);
+  bool currentValue;
+  SwitchWidgetClass(this.notifyParent, this.qid, this.sqid, this.currentValue);
 
   @override
   _SwitchWidgetClassState createState() =>
-      _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
+      _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid, this.currentValue);
 }
 
 class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
-  bool switchControl = false;
   Function(bool val, int qid, int sqid) notifyParent;
   int qid; //question id
   int sqid; //sub question id
+  bool currentValue;
+  bool switchControl = false;
 
-  _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid);
+  _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid, this.currentValue);
+
+
+  @override
+  void initState() {
+    super.initState();
+    this.switchControl = this.currentValue;
+  }
 
   @override
   Widget build(BuildContext context) {
