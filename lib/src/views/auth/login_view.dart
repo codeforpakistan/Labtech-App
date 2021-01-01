@@ -18,7 +18,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextStyle style = TextStyle(fontSize: 20.0);
-  var url = "http://localhost/api/v1/login/access-token";
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
   bool _loginFailed = false;

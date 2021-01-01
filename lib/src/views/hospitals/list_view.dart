@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 
 class HospitalList extends StatefulWidget {
   @override
@@ -12,6 +13,14 @@ class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getHospitalData() async {
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (isLocationServiceEnabled) {
+      print(isLocationServiceEnabled);
+    } else {
+      await Geolocator.requestPermission();
+    }
+
     var url = Constants.BASE_URL + "hospitals/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
@@ -24,6 +33,19 @@ class _HospitalListState extends State<HospitalList> {
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
     return data;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  void _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    Constants.prefs.setDouble('latitude', position.latitude);
+    Constants.prefs.setDouble('longitude', position.longitude);
   }
 
   @override
