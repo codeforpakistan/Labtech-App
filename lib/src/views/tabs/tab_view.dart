@@ -17,6 +17,7 @@ class TabView extends StatelessWidget {
         primarySwatch: Colors.lightGreen,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Century Gothic',
+        highlightColor: Colors.lightGreen
       ),
       home: DefaultTabController(
         length: 2,

@@ -32,11 +32,17 @@ class _ImageViewState extends State<ImageView> {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      title: Text(
+        "Survey Images",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
      final List<Widget> imageSliders = widget.images
       .map<Widget>((item) => Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+        margin: EdgeInsets.fromLTRB(0.0, 1.0, 0.0, 0.0),
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           child: Stack(
@@ -81,18 +87,14 @@ class _ImageViewState extends State<ImageView> {
       .toList();
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          "Survey Images",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: appBar,
       body: Column(
         children: [
           widget.images.length > 0
             ? CarouselSlider(
               options: CarouselOptions(
-                height: MediaQuery.of(context).size.height * 0.8,
+                viewportFraction: 0.98,  
+                height: MediaQuery.of(context).size.height - (appBar.preferredSize.height * 2.5),
                 aspectRatio: 1.0,
                 enlargeCenterPage: true,
                 enableInfiniteScroll: false,

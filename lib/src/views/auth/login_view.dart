@@ -140,7 +140,42 @@ class _LoginState extends State<Login> {
           ),
         ),
       ),
-      extendBody: true
+      extendBody: true,
+      // resizeToAvoidBottomInset: false,
+      bottomNavigationBar: ClipRRect(
+        clipBehavior: Clip.antiAlias,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        child: BottomAppBar(
+          color: Colors.white,
+          shape: CircularNotchedRectangle(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                "assets/nih-logo.png",
+                height: 60,
+                width: 60,
+              ),
+              Image.asset(
+                "assets/gov-of-pk-logo.png",
+                height: 60,
+                width: 60,
+              ),
+              Image.asset(
+                "assets/tech-logo.png",
+                height: 80,
+                width: 80,
+              ),
+              Image.asset(
+                "assets/cfp-logo.png",
+                height: 120,
+                width: 120,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

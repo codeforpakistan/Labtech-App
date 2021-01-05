@@ -7,8 +7,28 @@ import 'package:hospection/src/views/survey_submissions/create_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
+import 'package:hospection/src/views/splash_screen.dart';
 
-class Hosepction extends StatelessWidget {
+
+class Hosepction extends StatefulWidget {
+  @override
+  HosepctionState createState() => HosepctionState();
+}
+
+class HosepctionState extends State<Hosepction>  {
+  bool showSplash = true;
+
+  Widget render(BuildContext context) {
+    new Future.delayed(const Duration(milliseconds: 1500),
+      () => {
+        setState(() {
+          showSplash = false;
+        })
+      });
+    return SpashScreen();
+  }
+  
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -18,8 +38,9 @@ class Hosepction extends StatelessWidget {
         primarySwatch: Colors.lightGreen,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Century Gothic',
+        highlightColor: Colors.lightGreen
       ),
-      home: Constants.prefs.getBool("loggedIn") == true
+      home: showSplash  ? render(context) :  Constants.prefs.getBool("loggedIn") == true
           ? TabView()
           : Login(),
       routes: {

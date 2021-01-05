@@ -24,6 +24,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   List<File> imageFiles = [];
   bool processing = false;
   bool isLoading = true;
+  final ScrollController _scrollController = ScrollController();
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
     var url = Constants.BASE_URL + "surveys/?department_id=$departmentId";
@@ -263,126 +264,141 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                             imageFiles.length == 0 ? 1 : imageFiles.length,
                         itemBuilder: (BuildContext context, int index) =>
                             imageFiles.length == 0
-                                ? Padding(
+                                ? InkResponse(
+                                  child: Padding(
                                     padding: const EdgeInsets.only(top: 50.0),
                                     child: Text("Attach Images (optional)",
-                                        style: TextStyle(fontSize: 16)))
+                                      style: TextStyle(fontSize: 16))),
+                                  onTap: () {
+                                    _showPicker(context);
+                                  })
                                 : Image.file(
                                     imageFiles[index],
                                     fit: BoxFit.fitWidth,
                                   ),
                       ),
                     ),
+                    // this is it
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: questions.length,
-                        itemBuilder: (context, index) {
-                          if (questions[index].containsKey('sub_questions')) {
-                            var subQuestions =
-                                questions[index]['sub_questions'];
-                            var mainQid = questions[index]['q_id'];
-                            return Column(
-                              children: [
-                                Padding(
+                      child: Scrollbar(
+                        isAlwaysShown: true,
+                        controller: _scrollController,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: questions.length + 2,
+                          itemBuilder: (context, index) {
+                            if (index >= questions.length) {
+                              if (index == questions.length) {
+                              return isLoading ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 10.0,
+                                    left: 20.0,
+                                    right: 20.0,
+                                    bottom: 0.0),
+                                  child: Material(
+                                    child: commentField,
+                                  ),
+                                )
+                                : Center();
+                              } else {
+                              return isLoading
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 20.0,
+                                      left: 60.0,
+                                      right: 60.0,
+                                      bottom: 40.0),
+                                  child: Material(
+                                    elevation: 5.0,
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    color: Colors.lightGreen,
+                                    child: MaterialButton(
+                                      minWidth: MediaQuery.of(context).size.width,
+                                      padding:
+                                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                      onPressed: () {
+                                        this.payload['comment'] =
+                                            commentController.text;
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        showSubmitConfirmationDialog(context);
+                                      },
+                                      child: Text("Submit Survey",
+                                          textAlign: TextAlign.center,
+                                          style: style.copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                )
+                              : Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            } else {
+                              if (questions[index].containsKey('sub_questions')) {
+                                var subQuestions =
+                                    questions[index]['sub_questions'];
+                                var mainQid = questions[index]['q_id'];
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5.0),
+                                      child: ListTile(
+                                        title: Text(
+                                          questions[index]['question'],
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                        itemCount: subQuestions.length,
+                                        physics: ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20.0),
+                                            child: ListTile(
+                                              title: Text(
+                                                subQuestions[index]['question'],
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              trailing: SwitchWidgetClass(
+                                                  updateFromChild,
+                                                  mainQid,
+                                                  subQuestions[index]['s_q_id'],
+                                                  subQuestions[index]['answer']
+                                                ),
+                                            ),
+                                          );
+                                        }),
+                                  ],
+                                );
+                              } else {
+                                return Padding(
                                   padding: const EdgeInsets.only(top: 5.0),
                                   child: ListTile(
                                     title: Text(
                                       questions[index]['question'],
                                       style: TextStyle(fontSize: 16),
                                     ),
+                                    trailing: SwitchWidgetClass(
+                                      updateFromChild,
+                                      questions[index]['q_id'],
+                                      -1,
+                                      questions[index]['answer'],
+                                    ),
                                   ),
-                                ),
-                                ListView.builder(
-                                    itemCount: subQuestions.length,
-                                    physics: ClampingScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20.0),
-                                        child: ListTile(
-                                          title: Text(
-                                            subQuestions[index]['question'],
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                          trailing: SwitchWidgetClass(
-                                              updateFromChild,
-                                              mainQid,
-                                              subQuestions[index]['s_q_id'],
-                                              subQuestions[index]['answer']
-                                            ),
-                                        ),
-                                      );
-                                    }),
-                              ],
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5.0),
-                              child: ListTile(
-                                title: Text(
-                                  questions[index]['question'],
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                trailing: SwitchWidgetClass(
-                                  updateFromChild,
-                                  questions[index]['q_id'],
-                                  -1,
-                                  questions[index]['answer'],
-                                ),
-                              ),
-                            );
-                          }
-                        },
+                                );
+                              }
+                            }
+                          },
+                        )
                       ),
                     ),
-                    isLoading
-                        ? Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0,
-                                left: 20.0,
-                                right: 20.0,
-                                bottom: 0.0),
-                            child: Material(
-                              child: commentField,
-                            ),
-                          )
-                        : Center(),
-                    isLoading
-                        ? Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0,
-                                left: 60.0,
-                                right: 60.0,
-                                bottom: 40.0),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(30.0),
-                              color: Colors.lightGreen,
-                              child: MaterialButton(
-                                minWidth: MediaQuery.of(context).size.width,
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                onPressed: () {
-                                  this.payload['comment'] =
-                                      commentController.text;
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  showSubmitConfirmationDialog(context);
-                                },
-                                child: Text("Submit Survey",
-                                    textAlign: TextAlign.center,
-                                    style: style.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                          )
-                        : Center(
-                            child: CircularProgressIndicator(),
-                          ),
                   ],
                 )
               : Center(child: CircularProgressIndicator()));
