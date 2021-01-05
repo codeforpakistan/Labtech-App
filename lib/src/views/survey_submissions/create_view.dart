@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/widgets/switch_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toast/toast.dart';
 
@@ -69,9 +68,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     payloadFill['lng'] = this._longitude;
     payloadFill['survey_id'] = data['id'];
     setState(() => {
-          questions = list,
-          payload = payloadFill,
-        });
+      questions = list,
+      payload = payloadFill,
+    });
   }
 
   @override
@@ -371,7 +370,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                                   setState(() {
                                     isLoading = true;
                                   });
-                                  submitSurvey();
+                                  showSubmitConfirmationDialog(context);
                                 },
                                 child: Text("Submit Survey",
                                     textAlign: TextAlign.center,
@@ -423,4 +422,37 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       print(response.statusCode);
     }
   }
+
+  showSubmitConfirmationDialog(BuildContext context) {
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Yes"),
+      onPressed:  () {
+        submitSurvey();
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Submit Survey?"),
+      content: Text("Are you sure you want to submit?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
 }

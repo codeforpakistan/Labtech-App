@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
+import 'package:hospection/src/views/survey_submissions/image_view.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -46,61 +47,65 @@ class ShowSurveyDetails extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                      "Some unknown error has occurred, please contact your system administrator"));
+                    "Some unknown error has occurred, please contact your system administrator"));
               }
               final List<Widget> imageSliders = snapshot.data['images']
-                  .map<Widget>((item) => Container(
-                        margin: EdgeInsets.all(5.0),
-                        child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            child: Stack(
-                              children: <Widget>[
-                                Image.network(
-                                    Constants.BASE_URL + "utils/image/" + item,
-                                    fit: BoxFit.cover,
-                                    width: 1000.0),
-                                Positioned(
-                                  bottom: 0.0,
-                                  left: 0.0,
-                                  right: 0.0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color.fromARGB(200, 0, 0, 0),
-                                          Color.fromARGB(0, 0, 0, 0)
-                                        ],
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                    child: Text(
-                                      '${snapshot.data['images'].indexOf(item) + 1}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
+                .map<Widget>((item) => Container(
+                  margin: EdgeInsets.all(5.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    child: Stack(
+                      children: <Widget>[
+                        InkResponse(
+                          child: Image.network(
+                            Constants.BASE_URL + "utils/image/" + item,
+                            fit: BoxFit.cover,
+                            width: 1000.0),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) {
+                              return ImageView(tag: item, images: snapshot.data['images']);
+                            }));
+                          }),
+                          Positioned(
+                            bottom: 0.0,
+                            left: 0.0,
+                            right: 0.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(200, 0, 0, 0),
+                                    Color.fromARGB(0, 0, 0, 0)
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
                                 ),
-                              ],
-                            )),
-                      ))
-                  .toList();
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 20.0),
+                              child: Text(
+                                '${snapshot.data['images'].indexOf(item) + 1}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    )),
+                  ))
+                .toList();
               return Column(
                 children: [
                   snapshot.data['images'].length > 0
                       ? CarouselSlider(
                           options: CarouselOptions(
-                            aspectRatio: 2.0,
+                            aspectRatio: 3.0,
                             enlargeCenterPage: true,
                             enableInfiniteScroll: false,
-                            pageViewKey:
-                                PageStorageKey<String>('carousel_slider'),
+                            pageViewKey: PageStorageKey<String>('carousel_slider'),
                           ),
                           items: imageSliders,
                         )
