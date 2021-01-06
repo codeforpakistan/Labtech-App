@@ -169,8 +169,8 @@ class _LoginState extends State<Login> {
               ),
               Image.asset(
                 "assets/cfp-logo.png",
-                height: 120,
-                width: 120,
+                height: 60,
+                width: 60,
               ),
             ],
           ),

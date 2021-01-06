@@ -113,50 +113,80 @@ class ShowSurveyDetails extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data['answers'].length,
+                      itemCount: snapshot.data['answers'].length + 1,
                       itemBuilder: (context, index) {
-                        if (snapshot.data['answers'][index]
-                            .containsKey('sub_questions')) {
-                          var subQuestions =
-                              snapshot.data['answers'][index]['sub_questions'];
-                          return Column(
-                            children: [
-                              ListTile(
-                                leading: Icon(Icons.check_box,
-                                    color: Colors.grey[200]),
-                                title: Text(snapshot.data['answers'][index]
-                                    ['question']),
+                        if (index >= snapshot.data['answers'].length) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 20.0,
+                              left: 30.0,
+                              right: 20.0,
+                              bottom: 20.0),
+                            child: Material(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 5.0),
+                                    child: Text(
+                                      "Comment:", 
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      )
+                                    ),
+                                  ),
+                                  Text(snapshot.data['comment']), 
+                                ]
                               ),
-                              ListView.builder(
-                                  itemCount: subQuestions.length,
-                                  physics: ClampingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 50.0),
-                                      child: ListTile(
-                                        leading: subQuestions[index]["answer"]
-                                            ? Icon(Icons.check,
-                                                color: Colors.lightGreen)
-                                            : Icon(Icons.close,
-                                                color: Colors.red),
-                                        title: Text(
-                                            subQuestions[index]['question']),
-                                      ),
-                                    );
-                                  }),
-                            ],
+                            ),
                           );
                         } else {
-                          return ListTile(
-                            leading: snapshot.data['answers'][index]["answer"]
-                                ? Icon(Icons.check, color: Colors.lightGreen)
-                                : Icon(Icons.close, color: Colors.red),
-                            title: Text(
-                                snapshot.data['answers'][index]["question"]),
-                          );
+                          if (snapshot.data['answers'][index]
+                              .containsKey('sub_questions')) {
+                            var subQuestions =
+                                snapshot.data['answers'][index]['sub_questions'];
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(Icons.check_box,
+                                      color: Colors.grey[200]),
+                                  title: Text(snapshot.data['answers'][index]
+                                      ['question']),
+                                ),
+                                ListView.builder(
+                                    itemCount: subQuestions.length,
+                                    physics: ClampingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 50.0),
+                                        child: ListTile(
+                                          leading: subQuestions[index]["answer"]
+                                              ? Icon(Icons.check,
+                                                  color: Colors.lightGreen)
+                                              : Icon(Icons.close,
+                                                  color: Colors.red),
+                                          title: Text(
+                                              subQuestions[index]['question']),
+                                        ),
+                                      );
+                                    }),
+                              ],
+                            );
+                          } else {
+                            return ListTile(
+                              leading: snapshot.data['answers'][index]["answer"]
+                                  ? Icon(Icons.check, color: Colors.lightGreen)
+                                  : Icon(Icons.close, color: Colors.red),
+                              title: Text(
+                                  snapshot.data['answers'][index]["question"]),
+                            );
+                          }
                         }
                       },
                     ),
