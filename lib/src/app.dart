@@ -9,7 +9,6 @@ import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
 import 'package:hospection/src/views/splash_screen.dart';
 
-
 class Hosepction extends StatefulWidget {
   @override
   HosepctionState createState() => HosepctionState();
@@ -40,7 +39,7 @@ class HosepctionState extends State<Hosepction>  {
         fontFamily: 'Century Gothic',
         highlightColor: Colors.lightGreen
       ),
-      home: showSplash  ? render(context) :  Constants.prefs.getBool("loggedIn") == true
+      home: Constants.prefs.getBool("loggedIn") == true
           ? TabView()
           : Login(),
       routes: {

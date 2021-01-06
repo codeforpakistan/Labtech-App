@@ -17,7 +17,7 @@ class ImageView extends StatefulWidget {
 class _ImageViewState extends State<ImageView> {
   @override
   initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    // SystemChrome.setEnabledSystemUIOverlays([]);
     super.initState();
   }
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -26,7 +26,7 @@ class _ImageViewState extends State<ImageView> {
   @override
   void dispose() {
     //SystemChrome.restoreSystemUIOverlays();
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    // SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -93,8 +93,8 @@ class _ImageViewState extends State<ImageView> {
           widget.images.length > 0
             ? CarouselSlider(
               options: CarouselOptions(
-                viewportFraction: 0.98,  
-                height: MediaQuery.of(context).size.height - (appBar.preferredSize.height * 2.5),
+                viewportFraction: 0.99,  
+                height: MediaQuery.of(context).size.height - (appBar.preferredSize.height * 2),
                 aspectRatio: 1.0,
                 enlargeCenterPage: true,
                 enableInfiniteScroll: false,
