@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
 import 'package:hospection/src/views/departments/list_view.dart';
@@ -8,6 +10,8 @@ import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/utils/constants.dart';
 
 class TabView extends StatelessWidget {
+  FirebaseAnalytics analytics = FirebaseAnalytics();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -82,6 +86,9 @@ class TabView extends StatelessWidget {
           ),
         ),
       ),
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       routes: {
         '/login': (context) => Login(),
         '/home': (context) => TabView(),

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "771820896547",
+    "project_id": "hospection",
+    "storage_bucket": "hospection.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771820896547:android:74a5996779c30ad4b00c96",
+        "android_client_info": {
+          "package_name": "com.codeforpakistan.hospection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKiPLRf1T4vRiHI0cDi3xO0iAptmzFJnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -64,7 +64,7 @@ class ShowSurveyDetails extends StatelessWidget {
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (_) {
                               return ImageView(tag: item, images: snapshot.data['images']);
-                            }));
+                            }, settings: RouteSettings(name: 'ImageView')));
                           }),
                           Positioned(
                             bottom: 0.0,
