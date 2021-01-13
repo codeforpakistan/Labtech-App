@@ -1,4 +1,4 @@
-package com.codeforpakistan.hospection
+package com.org.nih.hospection
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>771820896547-0n0qbn9kiigrpgb9inpgm5aapgaa6c0t.apps.googleusercontent.com</string>
+	<string>771820896547-pcgn2irjeltgcjk60kimt8doe3rjvuf6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.771820896547-0n0qbn9kiigrpgb9inpgm5aapgaa6c0t</string>
+	<string>com.googleusercontent.apps.771820896547-pcgn2irjeltgcjk60kimt8doe3rjvuf6</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCHYPynleAtswVnmaaZ6fyWAJWFaGSEHCs</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.codeforpakistan.hospection</string>
+	<string>com.org.nih.hospection</string>
 	<key>PROJECT_ID</key>
 	<string>hospection</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:771820896547:ios:1d75df1622f7fd0cb00c96</string>
+	<string>1:771820896547:ios:00eeba59b8995764b00c96</string>
 </dict>
 </plist>
