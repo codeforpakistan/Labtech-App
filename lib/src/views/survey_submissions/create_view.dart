@@ -267,7 +267,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                           children: [
                             Flexible(
                               child: Center( child: Text(this.hospitalName + " > " + this.departmentName,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal)))
+                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)))
                             ),
                           ]
                         )

@@ -60,10 +60,12 @@ class _DepartmentListState extends State<DepartmentList> {
                     return Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Center(
-                        child: Row(
+                        child:Row(
                           children: [
-                            Text("Hospital: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                            Flexible( child: Text(hospitalName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal))),
+                            Flexible(
+                              child: Center( child: Text("Hospital: " + hospitalName,
+                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)))
+                            ),
                           ]
                         )
                       )
