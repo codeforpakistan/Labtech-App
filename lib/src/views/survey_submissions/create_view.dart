@@ -20,6 +20,8 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   double _latitude, _longitude;
   List<dynamic> questions = [];
   dynamic payload;
+  String departmentName;
+  String hospitalName;
   TextEditingController commentController = new TextEditingController();
   List<File> imageFiles = [];
   bool processing = false;
@@ -43,9 +45,13 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   Future getSurveyQuestionnaireForState() async {
     final Map<String, Object> dataFromDepartmentScreen =
-        ModalRoute.of(this.context).settings.arguments;
+      ModalRoute.of(this.context).settings.arguments;
     var hospitalId = dataFromDepartmentScreen['hospital_id'];
     var departmentId = dataFromDepartmentScreen['department_id'];
+    setState(() {
+      departmentName = dataFromDepartmentScreen['dept_name'];
+      hospitalName = dataFromDepartmentScreen['hospital_name'];
+    });
     var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
     this.setDefaultAnswers(data.first);
   }
@@ -254,6 +260,19 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
           body: questions != null && questions.length > 0 && !processing
               ? Column(
                   children: [
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Center( child: Text(this.hospitalName + " > " + this.departmentName,
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal)))
+                            ),
+                          ]
+                        )
+                      )
+                    ),
                     Container(
                       height: 120,
                       child: ListView.builder(

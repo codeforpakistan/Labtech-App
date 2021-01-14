@@ -86,7 +86,7 @@ class _HospitalListState extends State<HospitalList> {
                             Text("Address: ${snapshot.data[index]["address"]}"),
                         onTap: () {
                           _navigateAndDisplaySurvey(
-                              context, snapshot.data[index]["id"]);
+                              context, snapshot.data[index]["id"], snapshot.data[index]['name']);
                         },
                       ),
                     ),
@@ -105,8 +105,8 @@ class _HospitalListState extends State<HospitalList> {
     );
   }
 
-  _navigateAndDisplaySurvey(BuildContext context, hospitalId) async {
+  _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName) async {
     Navigator.pushNamed(context, "/department-list",
-        arguments: {"hospital_id": hospitalId});
+        arguments: {"hospital_id": hospitalId, "hospital_name": hospitalName});
   }
 }

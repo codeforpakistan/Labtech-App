@@ -31,6 +31,7 @@ class _DepartmentListState extends State<DepartmentList> {
     final Map<String, Object> dataFromHospitalScreen =
         ModalRoute.of(context).settings.arguments;
     var hospitalId = dataFromHospitalScreen['hospital_id'];
+    var hospitalName = dataFromHospitalScreen['hospital_name'];
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -49,32 +50,49 @@ class _DepartmentListState extends State<DepartmentList> {
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
-                    child: Text(
-                        "Some unknown error has occurred, please contact your system administrator"));
+                  child: Text(
+                    "Some unknown error has occurred, please contact your system administrator"));
               }
               return ListView.builder(
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data.length + 1,
                 itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey,
-                          width: 0.3,
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Text("Hospital: ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            Flexible( child: Text(hospitalName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal))),
+                          ]
+                        )
+                      )
+                    );
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey,
+                            width: 0.3,
+                          ),
                         ),
                       ),
-                    ),
-                    child: ListTile(
-                      leading: Icon(Icons.medical_services),
-                      title: Text(snapshot.data[index]['name']),
-                      onTap: () {
-                        _navigateAndDisplaySurvey(
+                      child: ListTile(
+                        leading: Icon(Icons.medical_services),
+                        title: Text(snapshot.data[index - 1]['name']),
+                        onTap: () {
+                          _navigateAndDisplaySurvey(
                             context,
-                            snapshot.data[index]["hospital_id"],
-                            snapshot.data[index]["id"]);
-                      },
-                    ),
-                  );
+                            snapshot.data[index - 1]["hospital_id"],
+                            snapshot.data[index - 1]["id"],
+                            hospitalName,
+                            snapshot.data[index - 1]["name"]
+                          );
+                        },
+                      ),
+                    );
+                  }
                 },
               );
               break;
@@ -90,8 +108,12 @@ class _DepartmentListState extends State<DepartmentList> {
   }
 
   _navigateAndDisplaySurvey(
-      BuildContext context, hospitalId, departmentId) async {
+      BuildContext context, hospitalId, departmentId, hospitalName, deptName) async {
     Navigator.pushNamed(context, "/submit-survey",
-        arguments: {"hospital_id": hospitalId, "department_id": departmentId});
+        arguments: {"hospital_id": hospitalId,
+        "department_id": departmentId,
+        "hospital_name": hospitalName,
+        "dept_name": deptName,
+      });
   }
 }
