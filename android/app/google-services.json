@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "771820896547",
+    "project_id": "hospection",
+    "storage_bucket": "hospection.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771820896547:android:74a5996779c30ad4b00c96",
+        "android_client_info": {
+          "package_name": "com.org.nih.hospection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKiPLRf1T4vRiHI0cDi3xO0iAptmzFJnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "771820896547-0n0qbn9kiigrpgb9inpgm5aapgaa6c0t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.org.nih.hospection"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771820896547:android:35545a73366a6477b00c96",
+        "android_client_info": {
+          "package_name": "com.org.nih.hospection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKiPLRf1T4vRiHI0cDi3xO0iAptmzFJnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771820896547-g76adg6n1i4h9820usisckdlcqfbtp8m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "771820896547-0n0qbn9kiigrpgb9inpgm5aapgaa6c0t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.org.nih.hospection"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

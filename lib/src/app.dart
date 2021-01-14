@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
@@ -16,6 +18,7 @@ class Hosepction extends StatefulWidget {
 
 class HosepctionState extends State<Hosepction>  {
   bool showSplash = true;
+  FirebaseAnalytics analytics = FirebaseAnalytics();
 
   Widget render(BuildContext context) {
     new Future.delayed(const Duration(milliseconds: 1500),
@@ -42,6 +45,9 @@ class HosepctionState extends State<Hosepction>  {
       home: Constants.prefs.getBool("loggedIn") == true
           ? TabView()
           : Login(),
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       routes: {
         '/login': (context) => Login(),
         '/home': (context) => TabView(),
