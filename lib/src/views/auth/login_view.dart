@@ -83,8 +83,7 @@ class _LoginState extends State<Login> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-    MediaQueryData queryData;
-    queryData = MediaQuery.of(context);
+    // MediaQueryData queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -103,17 +102,17 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         height: 155.0,
                         child: Image.asset(
-                          "assets/hospection-logo.png",
+                          "assets/lab-tech.png",
                           fit: BoxFit.contain,
                         ),
                       ),
                       SizedBox(height: 15.0),
-                      Text(
-                        'HOSPECTION',
-                        style: TextStyle(
-                            fontSize: 30, fontFamily: 'Century Gothic'),
-                        textAlign: TextAlign.center,
-                      ),
+                      // Text(
+                      //   'HOSPECTION',
+                      //   style: TextStyle(
+                      //       fontSize: 30, fontFamily: 'Century Gothic'),
+                      //   textAlign: TextAlign.center,
+                      // ),
                       SizedBox(height: 45.0),
                       Form(
                         key: _formKey,
@@ -187,21 +186,22 @@ class _LoginState extends State<Login> {
       }
     } on SocketException catch (_) {
       Toast.show("No internet access", this.context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
     }
   }
 
   signIn(String username, String password) async {
     setState(() {
-        _loginFailed = false;
-      });
+      _loginFailed = false;
+    });
     Map data = {
       'username': username,
       'password': password,
     };
     _checkInternetConnection();
     var jsonData;
-    var response = await http.post(Constants.BASE_URL + "login/access-token", body: data);
+    var response =
+        await http.post(Constants.BASE_URL + "login/access-token", body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       setState(() {

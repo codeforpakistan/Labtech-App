@@ -1,11 +1,9 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
 import 'package:hospection/src/views/departments/list_view.dart';
 import 'package:hospection/src/views/hospitals/list_view.dart';
-import 'package:hospection/src/views/survey_submissions/create_view.dart';
+import 'package:hospection/src/views/survey_submissions/survey_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
@@ -16,20 +14,19 @@ class Hosepction extends StatefulWidget {
   HosepctionState createState() => HosepctionState();
 }
 
-class HosepctionState extends State<Hosepction>  {
+class HosepctionState extends State<Hosepction> {
   bool showSplash = true;
-  FirebaseAnalytics analytics = FirebaseAnalytics();
 
   Widget render(BuildContext context) {
-    new Future.delayed(const Duration(milliseconds: 1500),
-      () => {
-        setState(() {
-          showSplash = false;
-        })
-      });
+    new Future.delayed(
+        const Duration(milliseconds: 1500),
+        () => {
+              setState(() {
+                showSplash = false;
+              })
+            });
     return SpashScreen();
   }
-  
 
   // This widget is the root of your application.
   @override
@@ -37,17 +34,12 @@ class HosepctionState extends State<Hosepction>  {
     return MaterialApp(
       title: 'Hospection',
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Century Gothic',
-        highlightColor: Colors.lightGreen
-      ),
-      home: Constants.prefs.getBool("loggedIn") == true
-          ? TabView()
-          : Login(),
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: analytics),
-      ],
+          primarySwatch: Colors.lightGreen,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          fontFamily: 'Century Gothic',
+          highlightColor: Colors.lightGreen),
+      home: Constants.prefs.getBool("loggedIn") == true ? TabView() : Login(),
+      navigatorObservers: [],
       routes: {
         '/login': (context) => Login(),
         '/home': (context) => TabView(),
@@ -55,7 +47,7 @@ class HosepctionState extends State<Hosepction>  {
         '/show-survey-details': (context) => ShowSurveyDetails(),
         '/hospital-list': (context) => HospitalList(),
         '/department-list': (context) => DepartmentList(),
-        '/submit-survey': (context) => SubmitSurvey(),
+        '/submit-survey': (context) => SurveyView(),
       },
       debugShowCheckedModeBanner: false,
     );

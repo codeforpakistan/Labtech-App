@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
-
 import 'package:hospection/src/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:hospection/src/widgets/switch_widget.dart';
@@ -45,7 +44,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
 
   Future getSurveyQuestionnaireForState() async {
     final Map<String, Object> dataFromDepartmentScreen =
-      ModalRoute.of(this.context).settings.arguments;
+        ModalRoute.of(this.context).settings.arguments;
     var hospitalId = dataFromDepartmentScreen['hospital_id'];
     var departmentId = dataFromDepartmentScreen['department_id'];
     setState(() {
@@ -75,9 +74,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     payloadFill['lng'] = this._longitude;
     payloadFill['survey_id'] = data['id'];
     setState(() => {
-      questions = list,
-      payload = payloadFill,
-    });
+          questions = list,
+          payload = payloadFill,
+        });
   }
 
   @override
@@ -89,14 +88,14 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     });
   }
 
-  // read location from shared preferences 
+  // read location from shared preferences
   void _setCurrentLocation() async {
     _latitude = Constants.prefs.getDouble('latitude');
     _longitude = Constants.prefs.getDouble('longitude');
     if (_latitude == null) {
       print('location Not provided');
-      _latitude =  0;
-      _longitude =  0;
+      _latitude = 0;
+      _longitude = 0;
     }
   }
 
@@ -156,6 +155,7 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     // upload image and save the name in the survey submission payload.
     var accessToken = Constants.prefs.getString('access_token');
     var stream =
+        // ignore: deprecated_member_use
         new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
     // get file length
     var length = await imageFile.length();
@@ -164,7 +164,6 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       "Authorization": "Bearer " + accessToken
     };
     var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    ;
     // string to uri
     var uri = Uri.parse(Constants.BASE_URL + 'utils/uploadimage/');
     var request = new http.MultipartRequest("POST", uri);
@@ -261,18 +260,19 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
               ? Column(
                   children: [
                     Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Center( child: Text(this.hospitalName + " > " + this.departmentName,
-                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)))
-                            ),
-                          ]
-                        )
-                      )
-                    ),
+                        child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(children: [
+                              Flexible(
+                                  child: Center(
+                                      child: Text(
+                                          this.hospitalName +
+                                              " > " +
+                                              this.departmentName,
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold)))),
+                            ]))),
                     Container(
                       height: 120,
                       child: ListView.builder(
@@ -284,13 +284,14 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                         itemBuilder: (BuildContext context, int index) =>
                             imageFiles.length == 0
                                 ? InkResponse(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 50.0),
-                                    child: Text("Attach Images (optional)",
-                                      style: TextStyle(fontSize: 16))),
-                                  onTap: () {
-                                    _showPicker(context);
-                                  })
+                                    child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 50.0),
+                                        child: Text("Attach Images (optional)",
+                                            style: TextStyle(fontSize: 16))),
+                                    onTap: () {
+                                      _showPicker(context);
+                                    })
                                 : Image.file(
                                     imageFiles[index],
                                     fit: BoxFit.fitWidth,
@@ -300,123 +301,133 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
                     // this is it
                     Expanded(
                       child: Scrollbar(
-                        isAlwaysShown: true,
-                        controller: _scrollController,
-                        child: ListView.builder(
+                          isAlwaysShown: true,
                           controller: _scrollController,
-                          itemCount: questions.length + 2,
-                          itemBuilder: (context, index) {
-                            if (index >= questions.length) {
-                              if (index == questions.length) {
-                              return isLoading ? Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 10.0,
-                                    left: 20.0,
-                                    right: 20.0,
-                                    bottom: 0.0),
-                                  child: Material(
-                                    child: commentField,
-                                  ),
-                                )
-                                : Center();
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: questions.length + 2,
+                            itemBuilder: (context, index) {
+                              if (index >= questions.length) {
+                                if (index == questions.length) {
+                                  return isLoading
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10.0,
+                                              left: 20.0,
+                                              right: 20.0,
+                                              bottom: 0.0),
+                                          child: Material(
+                                            child: commentField,
+                                          ),
+                                        )
+                                      : Center();
+                                } else {
+                                  return isLoading
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 20.0,
+                                              left: 60.0,
+                                              right: 60.0,
+                                              bottom: 40.0),
+                                          child: Material(
+                                            elevation: 5.0,
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                            color: Colors.lightGreen,
+                                            child: MaterialButton(
+                                              minWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              padding: EdgeInsets.fromLTRB(
+                                                  20.0, 15.0, 20.0, 15.0),
+                                              onPressed: () {
+                                                this.payload['comment'] =
+                                                    commentController.text;
+                                                setState(() {
+                                                  isLoading = true;
+                                                });
+                                                showSubmitConfirmationDialog(
+                                                    context);
+                                              },
+                                              child: Text("Submit Survey",
+                                                  textAlign: TextAlign.center,
+                                                  style: style.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
+                                          ),
+                                        )
+                                      : Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                }
                               } else {
-                              return isLoading
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20.0,
-                                      left: 60.0,
-                                      right: 60.0,
-                                      bottom: 40.0),
-                                  child: Material(
-                                    elevation: 5.0,
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    color: Colors.lightGreen,
-                                    child: MaterialButton(
-                                      minWidth: MediaQuery.of(context).size.width,
-                                      padding:
-                                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                      onPressed: () {
-                                        this.payload['comment'] =
-                                            commentController.text;
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        showSubmitConfirmationDialog(context);
-                                      },
-                                      child: Text("Submit Survey",
-                                          textAlign: TextAlign.center,
-                                          style: style.copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                )
-                              : Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                            } else {
-                              if (questions[index].containsKey('sub_questions')) {
-                                var subQuestions =
-                                    questions[index]['sub_questions'];
-                                var mainQid = questions[index]['q_id'];
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 5.0),
-                                      child: ListTile(
-                                        title: Text(
-                                          questions[index]['question'],
-                                          style: TextStyle(fontSize: 16),
+                                if (questions[index]
+                                    .containsKey('sub_questions')) {
+                                  var subQuestions =
+                                      questions[index]['sub_questions'];
+                                  var mainQid = questions[index]['q_id'];
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 5.0),
+                                        child: ListTile(
+                                          title: Text(
+                                            questions[index]['question'],
+                                            style: TextStyle(fontSize: 16),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    ListView.builder(
-                                        itemCount: subQuestions.length,
-                                        physics: ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 20.0),
-                                            child: ListTile(
-                                              title: Text(
-                                                subQuestions[index]['question'],
-                                                style: TextStyle(fontSize: 16),
-                                              ),
-                                              trailing: SwitchWidgetClass(
-                                                  updateFromChild,
-                                                  mainQid,
-                                                  subQuestions[index]['s_q_id'],
-                                                  subQuestions[index]['answer']
+                                      ListView.builder(
+                                          itemCount: subQuestions.length,
+                                          physics: ClampingScrollPhysics(),
+                                          shrinkWrap: true,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0),
+                                              child: ListTile(
+                                                title: Text(
+                                                  subQuestions[index]
+                                                      ['question'],
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
-                                            ),
-                                          );
-                                        }),
-                                  ],
-                                );
-                              } else {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 5.0),
-                                  child: ListTile(
-                                    title: Text(
-                                      questions[index]['question'],
-                                      style: TextStyle(fontSize: 16),
+                                                trailing: SwitchWidgetClass(
+                                                    updateFromChild,
+                                                    mainQid,
+                                                    subQuestions[index]
+                                                        ['s_q_id'],
+                                                    subQuestions[index]
+                                                        ['answer']),
+                                              ),
+                                            );
+                                          }),
+                                    ],
+                                  );
+                                } else {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 5.0),
+                                    child: ListTile(
+                                      title: Text(
+                                        questions[index]['question'],
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      trailing: SwitchWidgetClass(
+                                        updateFromChild,
+                                        questions[index]['q_id'],
+                                        -1,
+                                        questions[index]['answer'],
+                                      ),
                                     ),
-                                    trailing: SwitchWidgetClass(
-                                      updateFromChild,
-                                      questions[index]['q_id'],
-                                      -1,
-                                      questions[index]['answer'],
-                                    ),
-                                  ),
-                                );
+                                  );
+                                }
                               }
-                            }
-                          },
-                        )
-                      ),
+                            },
+                          )),
                     ),
                   ],
                 )
@@ -433,6 +444,9 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
     var accessToken = Constants.prefs.getString('access_token');
     var url = Constants.BASE_URL + 'submissions/';
     var data = json.encode(this.payload);
+//      {"comment":"t","answers":[{"q_id":0,"question":"Does this survey works?","options":[{"opt_id":1,"text":"Some what"},{"opt_id":2,"text":"Still fixing"}],"weightage":3,"alias":"designated Quality","answer":true},{"q_id":1,"question":"Does the lab have a formally designated Quality Officer or Manager?","options":[{"opt_id":1,"text":"Some what"},{"opt_id":2,"text":"none"}],"weightage":3,"alias":"designated Quality","answer":true},{"q_id":2,"question":"Is there a quality manual in place that confirms to ISO Standards?","options":[{"opt_id":1,"text":"yeah"},{"opt_id":2,"text":"whatever"}],"weightage":3,"alias":"ISO Standards","answer":true},{"q_id":2,"question":"Is there documentation showing that the quality officer review media QC, ID QC and AST QC resutls?","options":[{"opt_id":1,"text":"yes"
+// flutter: },{"opt_id":2,"text":"Some, but would like additional training"},{"opt_id":3,"text":"No training documentated"}],"weightage":3,"alias":"training documents","answer":true}],"images":[],"lat":0.0,"lng":0.0,"survey_id":3}
+
     printWrapped(data);
     this.processing = true;
     var response = await http.post(url,
@@ -459,15 +473,17 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
   }
 
   showSubmitConfirmationDialog(BuildContext context) {
+    // ignore: deprecated_member_use
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      onPressed:  () {
+      onPressed: () {
         Navigator.of(context, rootNavigator: true).pop();
       },
     );
+    // ignore: deprecated_member_use
     Widget continueButton = FlatButton(
       child: Text("Yes"),
-      onPressed:  () {
+      onPressed: () {
         submitSurvey();
         Navigator.of(context, rootNavigator: true).pop();
       },
@@ -489,5 +505,4 @@ class _SubmitSurveyState extends State<SubmitSurvey> {
       },
     );
   }
-
 }

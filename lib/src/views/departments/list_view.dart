@@ -36,7 +36,7 @@ class _DepartmentListState extends State<DepartmentList> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          "Department's List",
+          "Indicators List",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -45,31 +45,29 @@ class _DepartmentListState extends State<DepartmentList> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return Center(child: Text("Getting the departments list"));
+              return Center(child: Text("Getting the Indicators list"));
               break;
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
-                  child: Text(
-                    "Some unknown error has occurred, please contact your system administrator"));
+                    child: Text(
+                        "Some unknown error has occurred, please contact your system administrator"));
               }
               return ListView.builder(
                 itemCount: snapshot.data.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Center(
-                        child:Row(
-                          children: [
-                            Flexible(
-                              child: Center( child: Text("Hospital: " + hospitalName,
-                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)))
-                            ),
-                          ]
-                        )
-                      )
-                    );
+                        padding: const EdgeInsets.all(20.0),
+                        child: Center(
+                            child: Row(children: [
+                          Flexible(
+                              child: Center(
+                                  child: Text("Lab: " + hospitalName,
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold)))),
+                        ])));
                   } else {
                     return Container(
                       decoration: BoxDecoration(
@@ -81,16 +79,22 @@ class _DepartmentListState extends State<DepartmentList> {
                         ),
                       ),
                       child: ListTile(
-                        leading: Icon(Icons.medical_services),
-                        title: Text(snapshot.data[index - 1]['name']),
+                        leading: Icon(
+                            snapshot.data[index - 1]["have_submission"] == true
+                                ? Icons.check_box_rounded
+                                : Icons.check_box_outline_blank),
+                        title: Text(snapshot.data[index - 1]['name'] +
+                            ' ' +
+                            '(' +
+                            snapshot.data[index - 1]['module_name'] +
+                            ')'),
                         onTap: () {
                           _navigateAndDisplaySurvey(
-                            context,
-                            snapshot.data[index - 1]["hospital_id"],
-                            snapshot.data[index - 1]["id"],
-                            hospitalName,
-                            snapshot.data[index - 1]["name"]
-                          );
+                              context,
+                              snapshot.data[index - 1]["hospital_id"],
+                              snapshot.data[index - 1]["id"],
+                              hospitalName,
+                              snapshot.data[index - 1]["name"]);
                         },
                       ),
                     );
@@ -109,13 +113,13 @@ class _DepartmentListState extends State<DepartmentList> {
     );
   }
 
-  _navigateAndDisplaySurvey(
-      BuildContext context, hospitalId, departmentId, hospitalName, deptName) async {
-    Navigator.pushNamed(context, "/submit-survey",
-        arguments: {"hospital_id": hospitalId,
-        "department_id": departmentId,
-        "hospital_name": hospitalName,
-        "dept_name": deptName,
-      });
+  _navigateAndDisplaySurvey(BuildContext context, hospitalId, departmentId,
+      hospitalName, deptName) async {
+    Navigator.pushNamed(context, "/submit-survey", arguments: {
+      "hospital_id": hospitalId,
+      "department_id": departmentId,
+      "hospital_name": hospitalName,
+      "dept_name": deptName,
+    });
   }
 }

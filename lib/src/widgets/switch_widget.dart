@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class SwitchWidgetClass extends StatefulWidget {
   Function(bool val, int qid, int sqid) notifyParent;
   int qid; //question id
@@ -8,8 +9,8 @@ class SwitchWidgetClass extends StatefulWidget {
   SwitchWidgetClass(this.notifyParent, this.qid, this.sqid, this.currentValue);
 
   @override
-  _SwitchWidgetClassState createState() =>
-      _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid, this.currentValue);
+  _SwitchWidgetClassState createState() => _SwitchWidgetClassState(
+      this.notifyParent, this.qid, this.sqid, this.currentValue);
 }
 
 class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
@@ -19,8 +20,8 @@ class _SwitchWidgetClassState extends State<SwitchWidgetClass> {
   bool currentValue;
   bool switchControl = false;
 
-  _SwitchWidgetClassState(this.notifyParent, this.qid, this.sqid, this.currentValue);
-
+  _SwitchWidgetClassState(
+      this.notifyParent, this.qid, this.sqid, this.currentValue);
 
   @override
   void initState() {

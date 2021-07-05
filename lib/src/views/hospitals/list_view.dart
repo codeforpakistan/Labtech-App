@@ -32,6 +32,7 @@ class _HospitalListState extends State<HospitalList> {
       },
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
+    print(data);
     return data;
   }
 
@@ -57,13 +58,13 @@ class _HospitalListState extends State<HospitalList> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return Center(child: Text("Getting the hospitals list"));
+              return Center(child: Text("Getting the Labs list"));
               break;
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
-                  child: Text(
-                    "Some unknown error has occurred, please contact your system administrator"));
+                    child: Text(
+                        "Some unknown error has occurred, please contact your system administrator"));
               }
               return ListView.builder(
                 itemCount: snapshot.data.length,
@@ -80,13 +81,15 @@ class _HospitalListState extends State<HospitalList> {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: ListTile(
-                        leading: Icon(Icons.medical_services),
+                        leading: Icon(Icons.health_and_safety_outlined),
                         title: Text(snapshot.data[index]['name']),
                         subtitle:
                             Text("Address: ${snapshot.data[index]["address"]}"),
                         onTap: () {
                           _navigateAndDisplaySurvey(
-                              context, snapshot.data[index]["id"], snapshot.data[index]['name']);
+                              context,
+                              snapshot.data[index]["id"],
+                              snapshot.data[index]['name']);
                         },
                       ),
                     ),
@@ -105,7 +108,8 @@ class _HospitalListState extends State<HospitalList> {
     );
   }
 
-  _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName) async {
+  _navigateAndDisplaySurvey(
+      BuildContext context, hospitalId, hospitalName) async {
     Navigator.pushNamed(context, "/department-list",
         arguments: {"hospital_id": hospitalId, "hospital_name": hospitalName});
   }
