@@ -53,7 +53,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lab-tech.png
-    - hospection-logo.png
     - nih-logo.png
     - gov-of-pk-logo.png
     - tech-logo.png
