@@ -32,6 +32,8 @@ class _DepartmentListState extends State<DepartmentList> {
         ModalRoute.of(context).settings.arguments;
     var hospitalId = dataFromHospitalScreen['hospital_id'];
     var hospitalName = dataFromHospitalScreen['hospital_name'];
+    final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
+    print(isFromProgressView);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -79,10 +81,13 @@ class _DepartmentListState extends State<DepartmentList> {
                         ),
                       ),
                       child: ListTile(
-                        leading: Icon(
-                            snapshot.data[index - 1]["have_submission"] == true
+                        leading: isFromProgressView
+                            ? Icon(snapshot.data[index - 1]
+                                        ["have_submission"] ==
+                                    true
                                 ? Icons.check_box_rounded
-                                : Icons.check_box_outline_blank),
+                                : Icons.check_box_outline_blank)
+                            : null,
                         title: Text(snapshot.data[index - 1]['name'] +
                             ' ' +
                             '(' +

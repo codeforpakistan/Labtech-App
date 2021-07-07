@@ -5,13 +5,15 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 
 class HospitalList extends StatefulWidget {
+  final bool isFromProgressView;
+  const HospitalList({Key key, this.isFromProgressView, bool})
+      : super(key: key);
   @override
   _HospitalListState createState() => _HospitalListState();
 }
 
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   Future getHospitalData() async {
     bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
@@ -87,9 +89,11 @@ class _HospitalListState extends State<HospitalList> {
                             Text("Address: ${snapshot.data[index]["address"]}"),
                         onTap: () {
                           _navigateAndDisplaySurvey(
-                              context,
-                              snapshot.data[index]["id"],
-                              snapshot.data[index]['name']);
+                            context,
+                            snapshot.data[index]["id"],
+                            snapshot.data[index]['name'],
+                            widget.isFromProgressView,
+                          );
                         },
                       ),
                     ),
@@ -108,9 +112,12 @@ class _HospitalListState extends State<HospitalList> {
     );
   }
 
-  _navigateAndDisplaySurvey(
-      BuildContext context, hospitalId, hospitalName) async {
-    Navigator.pushNamed(context, "/department-list",
-        arguments: {"hospital_id": hospitalId, "hospital_name": hospitalName});
+  _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName,
+      isFromProgressView) async {
+    Navigator.pushNamed(context, "/department-list", arguments: {
+      "hospital_id": hospitalId,
+      "hospital_name": hospitalName,
+      "isFromProgressView": isFromProgressView
+    });
   }
 }

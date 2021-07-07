@@ -13,7 +13,7 @@ class TabView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Hospection',
+      title: 'Lab Tech',
       theme: ThemeData(
           primarySwatch: Colors.lightGreen,
           visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -46,24 +46,7 @@ class TabView extends StatelessWidget {
                               size: 16, color: Colors.white),
                         ),
                         TextSpan(
-                          text: " Conduct a survey",
-                          style: TextStyle(
-                              fontFamily: "BarlowBold", color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: Icon(Icons.file_copy,
-                              size: 16, color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: "Submitted",
+                          text: " Conduct Survey",
                           style: TextStyle(
                               fontFamily: "BarlowBold", color: Colors.white),
                         ),
@@ -88,6 +71,23 @@ class TabView extends StatelessWidget {
                     ),
                   ),
                 ),
+                Tab(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Icon(Icons.file_copy,
+                              size: 16, color: Colors.white),
+                        ),
+                        TextSpan(
+                          text: "Submitted",
+                          style: TextStyle(
+                              fontFamily: "BarlowBold", color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             title: Text("Hospection",
@@ -96,9 +96,9 @@ class TabView extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              HospitalList(),
+              HospitalList(isFromProgressView: false),
+              HospitalList(isFromProgressView: true),
               SubmittedSurveyList(),
-              SubmittedSurveyList()
             ],
           ),
         ),
@@ -109,7 +109,7 @@ class TabView extends StatelessWidget {
         '/home': (context) => TabView(),
         '/submitted-survey-list': (context) => SubmittedSurveyList(),
         '/show-survey-details': (context) => ShowSurveyDetails(),
-        '/hospital-list': (context) => HospitalList(),
+        '/hospital-list': (context) => HospitalList(isFromProgressView: false),
         '/department-list': (context) => DepartmentList(),
         '/submit-survey': (context) => SurveyView(),
       },
