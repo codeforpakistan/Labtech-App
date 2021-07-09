@@ -43,7 +43,6 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
     _getCurrentLocation();
   }
 
-
   void _getCurrentLocation() async {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -55,7 +54,7 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-     
+
       body: FutureBuilder(
         future: getSubmittedSurveysData(),
         builder: (context, snapshot) {
