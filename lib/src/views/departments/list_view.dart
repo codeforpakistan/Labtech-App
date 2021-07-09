@@ -23,6 +23,7 @@ class _DepartmentListState extends State<DepartmentList> {
       },
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
+    print(data);
     return data;
   }
 
