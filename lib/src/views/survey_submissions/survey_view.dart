@@ -184,34 +184,40 @@ class _MySurveyState extends State<SurveyView> {
   }
 
   submitSurvey(SurveyResult result) async {
-    result.results.asMap().forEach((key, value) {
-      var id = value?.results[0]?.id?.id;
-      if (id != 'null') {
-        this.payload['answers'][int.parse(id)]['answer'] =
-            value?.results[0]?.valueIdentifier;
-        print(this.payload['answers'][int.parse(id)]['answer']);
-      }
-    });
-    var accessToken = Constants.prefs.getString('access_token');
-    var url = Constants.BASE_URL + 'submissions/';
-    var data = json.encode(this.payload);
-    var response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: data);
-    if (response.statusCode == 200) {
-      Toast.show("Survey submitted!", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      // var jsonData = json.decode(response.body);
-      setState(() {
-        Navigator.pushReplacementNamed(this.context, '/home');
+    try {
+      result.results.asMap().forEach((key, value) {
+        var id = value?.results[0]?.id?.id;
+        if (id != 'null') {
+          this.payload['answers'][int.parse(id)]['answer'] =
+              value?.results[0]?.valueIdentifier;
+          print(this.payload['answers'][int.parse(id)]['answer']);
+        }
       });
-    } else {
-      Toast.show("Server Error", this.context,
+      var accessToken = Constants.prefs.getString('access_token');
+      var url = Constants.BASE_URL + 'submissions/';
+      var data = json.encode(this.payload);
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+          body: data);
+      if (response.statusCode == 200) {
+        Toast.show("Survey submitted!", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        // var jsonData = json.decode(response.body);
+        setState(() {
+          Navigator.pushReplacementNamed(this.context, '/home');
+        });
+      } else {
+        Toast.show("Server Error", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        print(response.statusCode);
+      }
+    } catch (error) {
+      Toast.show("Submission Error", this.context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      print(response.statusCode);
+      print(error);
     }
   }
 
@@ -266,13 +272,14 @@ class _MySurveyState extends State<SurveyView> {
               answerFormat: SingleChoiceAnswerFormat(
                   defaultSelection: null, textChoices: choices)))
         });
-    steps.add(QuestionStep(
-      title: 'Comments',
-      text: 'Please Enter you remarks',
-      answerFormat: TextAnswerFormat(
-        maxLines: 10,
-      ),
-    ));
+    // steps.add(QuestionStep(
+    //   id: StepIdentifier(id: this.questions.length.toString()),
+    //   title: 'Comments',
+    //   text: 'Please Enter you remarks',
+    //   answerFormat: TextAnswerFormat(
+    //     maxLines: 10,
+    //   ),
+    // ));
     steps.add(CompletionStep(
       id: StepIdentifier(id: 'null'),
       text: 'Thanks for taking the survey, we will contact you soon!',
