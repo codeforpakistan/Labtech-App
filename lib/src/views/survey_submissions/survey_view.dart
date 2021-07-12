@@ -234,7 +234,7 @@ class _MySurveyState extends State<SurveyView> {
 
   submitSurvey(SurveyResult result) async {
     var hasInternet = await _checkInternetConnection();
-    if (hasInternet) {
+    if (!hasInternet) {
       result.results.asMap().forEach((key, value) {
         var id = value?.results[0]?.id?.id;
         if (id != 'null') {

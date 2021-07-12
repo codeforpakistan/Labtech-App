@@ -8,6 +8,8 @@ import 'package:hospection/src/views/survey_submissions/details_view.dart';
 import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
 import 'package:hospection/src/views/splash_screen.dart';
+import 'package:hive/hive.dart';
+import 'package:hospection/src/models/survey_model.dart';
 
 class Hosepction extends StatefulWidget {
   @override
@@ -26,6 +28,33 @@ class HosepctionState extends State<Hosepction> {
               })
             });
     return SpashScreen();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _submitPendingSurveyFromHive();
+  }
+
+  _submitPendingSurveyFromHive() async {
+    print('_submitPendingSurveyFromHive');
+    try {
+      if (!Hive.isAdapterRegistered(1)) {
+        Hive.registerAdapter(SurveyModelAdapter());
+      };
+      var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
+      print('box.keys');
+      print(box.keys);
+      box.keys.forEach((k) {
+        print(k);
+        SurveyModel survey = box.get(k);
+        print(survey);
+      });
+    }  catch (error)  {
+      print('hive error');
+      print(error);
+      return false;
+    }
   }
 
   // This widget is the root of your application.
