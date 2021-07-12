@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart' hide Step;
 import 'package:survey_kit/survey_kit.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:hospection/src/models/survey_model.dart';
 
 class SurveyView extends StatefulWidget {
   @override
@@ -16,6 +20,7 @@ class _MySurveyState extends State<SurveyView> {
   dynamic payload;
   List<dynamic> questions = [];
   bool processing = false;
+  String surveyKey;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +140,7 @@ class _MySurveyState extends State<SurveyView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getSurveyQuestionnaireForState();
     });
+    _initialStorageSettings();
   }
 
   Future getSurveyQuestionnaire(hospitalId, departmentId, returnRoot) async {
@@ -160,45 +166,125 @@ class _MySurveyState extends State<SurveyView> {
     setState(() {
       departmentName = dataFromDepartmentScreen['dept_name'];
       hospitalName = dataFromDepartmentScreen['hospital_name'];
+      surveyKey = hospitalId.toString() + departmentId.toString();
     });
     var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
     this.setDefaultAnswers(data.first);
   }
 
-  submitSurvey(SurveyResult result) async {
-    result.results.asMap().forEach((key, value) {
-      var id = value?.results[0]?.id?.id;
-      if (id != 'null') {
-        print(id);
-        this.payload['answers'][int.parse(id)]['answer'] =
-            value?.results[0]?.valueIdentifier;
-        print(this.payload['answers'][int.parse(id)]['answer']);
-      }
-    });
-    var accessToken = Constants.prefs.getString('access_token');
-    var url = Constants.BASE_URL + 'submissions/';
-    var data = json.encode(this.payload);
-    this.processing = true;
-    var response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: data);
-    if (response.statusCode == 200) {
-      this.processing = false;
-      Toast.show("Survey submitted!", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      // var jsonData = json.decode(response.body);
-      setState(() {
-        Navigator.pushReplacementNamed(this.context, '/home');
+  _initialStorageSettings() async {
+    print('_initialStorageSettings');
+    _listKeysInHive();
+  }
+
+  Future<bool> _addSurveyInHive(dynamic data, String key) async {
+    try {
+      if (!Hive.isAdapterRegistered(1)) {
+        Hive.registerAdapter(SurveyModelAdapter());
+      };
+      var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
+      // construct Survey instance
+      var surveyItem = SurveyModel(int.parse(key), data, new DateTime.now());
+      box.put(this.surveyKey, surveyItem);
+      print('Survey stored in hive');
+      return true;
+    } catch (error)  {
+      print('hive error');
+      print(error);
+      return false;
+    }
+  }
+
+  _listKeysInHive() async {
+    try {
+      if (!Hive.isAdapterRegistered(1)) {
+        Hive.registerAdapter(SurveyModelAdapter());
+      };
+      var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
+      print('box.keys');
+      print(box.keys);
+      box.keys.forEach((k) {
+        print(k);
+        SurveyModel survey = box.get(k);
+        printWrapped(json.encode(survey.payload));
       });
+    }  catch (error)  {
+      print('hive error');
+      print(error);
+      return false;
+    }
+  }
+
+   void printWrapped(String text) {
+    final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
+  Future<bool> _checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+      return false;
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
+
+  submitSurvey(SurveyResult result) async {
+    var hasInternet = await _checkInternetConnection();
+    if (hasInternet) {
+      result.results.asMap().forEach((key, value) {
+        var id = value?.results[0]?.id?.id;
+        if (id != 'null') {
+          print(id);
+          this.payload['answers'][int.parse(id)]['answer'] =
+              value?.results[0]?.valueIdentifier;
+          print(this.payload['answers'][int.parse(id)]['answer']);
+        }
+      });
+      var accessToken = Constants.prefs.getString('access_token');
+      var url = Constants.BASE_URL + 'submissions/';
+      var data = json.encode(this.payload);
+      this.processing = true;
+      var response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+          body: data);
+      if (response.statusCode == 200) {
+        this.processing = false;
+        Toast.show("Survey submitted!", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        // var jsonData = json.decode(response.body);
+        setState(() {
+          Navigator.pushReplacementNamed(this.context, '/home');
+        });
+      } else {
+        this.processing = false;
+        print('something went wrong');
+        Toast.show("Server Error", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        print(response.statusCode);
+      }
     } else {
-      this.processing = false;
-      print('something went wrong');
-      Toast.show("Server Error", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      print(response.statusCode);
+      Toast.show("No internet! Saving survey response to upload later", this.context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+        print('_addSurveyInHive');
+      // save in hive
+      print('saving in hive');
+      printWrapped(json.encode(this.payload));
+      var hiveResp = await _addSurveyInHive(this.payload, this.surveyKey);
+      if (hiveResp) {
+        setState(() {
+          Navigator.pushReplacementNamed(this.context, '/home');
+        });
+      } else {
+        Toast.show("Server Error. Please contact support", this.context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
     }
   }
 
