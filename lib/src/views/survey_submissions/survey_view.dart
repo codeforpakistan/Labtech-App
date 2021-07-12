@@ -8,6 +8,10 @@ import 'package:toast/toast.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hospection/src/models/survey_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'dart:io';
+import 'package:async/async.dart';
 
 class SurveyView extends StatefulWidget {
   @override
@@ -21,12 +25,30 @@ class _MySurveyState extends State<SurveyView> {
   List<dynamic> questions = [];
   bool processing = false;
   String surveyKey;
+  List<File> imageFiles = [];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          primarySwatch: Colors.lightGreen,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          fontFamily: 'Century Gothic',
+          highlightColor: Colors.lightGreen),
       home: Scaffold(
-        body: questions != null && questions.length > 0 && !processing
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.add_a_photo),
+              color: Colors.white,
+              tooltip: "Upload image",
+              onPressed: () {
+                _showPicker(context);
+              },
+            ),
+          ],
+        ),
+        body: questions != null && questions.length > 0
             ? Container(
                 color: Colors.white,
                 child: Align(
@@ -46,9 +68,6 @@ class _MySurveyState extends State<SurveyView> {
                         // check
                         submitSurvey(result);
                       },
-                      // surveyController: (SurveyController controller) async =>{
-                      //   controller.
-                      // },
                       task: getSampleTask(),
                       themeData: Theme.of(context).copyWith(
                         colorScheme: ColorScheme.fromSwatch(
@@ -59,7 +78,7 @@ class _MySurveyState extends State<SurveyView> {
                         primaryColor: Colors.cyan,
                         backgroundColor: Colors.white,
                         appBarTheme: const AppBarTheme(
-                          backwardsCompatibility: true,
+                          backwardsCompatibility: false,
                           color: Colors.white,
                           iconTheme: IconThemeData(
                             color: Colors.cyan,
@@ -234,30 +253,29 @@ class _MySurveyState extends State<SurveyView> {
 
   submitSurvey(SurveyResult result) async {
     var hasInternet = await _checkInternetConnection();
-    if (!hasInternet) {
+    if (hasInternet) {
       result.results.asMap().forEach((key, value) {
         var id = value?.results[0]?.id?.id;
         if (id != 'null') {
           print(id);
           this.payload['answers'][int.parse(id)]['answer'] =
-              value?.results[0]?.valueIdentifier;
+            value?.results[0]?.valueIdentifier;
           print(this.payload['answers'][int.parse(id)]['answer']);
         }
       });
       var accessToken = Constants.prefs.getString('access_token');
       var url = Constants.BASE_URL + 'submissions/';
       var data = json.encode(this.payload);
-      this.processing = true;
       var response = await http.post(url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $accessToken',
-          },
-          body: data);
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: data);
       if (response.statusCode == 200) {
         this.processing = false;
         Toast.show("Survey submitted!", this.context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         // var jsonData = json.decode(response.body);
         setState(() {
           Navigator.pushReplacementNamed(this.context, '/home');
@@ -266,7 +284,7 @@ class _MySurveyState extends State<SurveyView> {
         this.processing = false;
         print('something went wrong');
         Toast.show("Server Error", this.context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         print(response.statusCode);
       }
     } else {
@@ -332,12 +350,20 @@ class _MySurveyState extends State<SurveyView> {
                 value: eachOption['text']));
           }),
           steps.add(QuestionStep(
+              isOptional: false,
               id: StepIdentifier(id: index.toString()),
               title: 'Question ' + index.toString() + '/' + total.toString(),
               text: each['question'],
               answerFormat: SingleChoiceAnswerFormat(
                   defaultSelection: null, textChoices: choices)))
         });
+    steps.add(QuestionStep(
+      title: 'Comments',
+      text: 'Please Enter you remarks',
+      answerFormat: TextAnswerFormat(
+        maxLines: 10,
+      ),
+    ));
     steps.add(CompletionStep(
       id: StepIdentifier(id: 'null'),
       text: 'Thanks for taking the survey, we will contact you soon!',
@@ -348,5 +374,102 @@ class _MySurveyState extends State<SurveyView> {
     // task.addNavigationRule(
     //     forTriggerStepIdentifier: steps[0].id, navigationRule: null);
     return task;
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.photo_library),
+                    title: new Text('Photo Library'),
+                    onTap: () {
+                      _getFromGallery();
+                      Navigator.of(context).pop();
+                    }),
+                new ListTile(
+                  leading: new Icon(Icons.photo_camera),
+                  title: new Text('Camera'),
+                  onTap: () {
+                    _getFromCamera();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _getFromCamera() async {
+    PickedFile pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        imageFiles.add(File(pickedFile.path));
+      });
+      await _uploadImage(File(pickedFile.path));
+    }
+  }
+
+  _getFromGallery() async {
+    PickedFile pickedFile = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        imageFiles.add(File(pickedFile.path));
+      });
+      await _uploadImage(File(pickedFile.path));
+    }
+  }
+
+  _uploadImage(File imageFile) async {
+    // upload image and save the name in the survey submission payload.
+    var accessToken = Constants.prefs.getString('access_token');
+    var stream =
+        // ignore: deprecated_member_use
+        new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+    // get file length
+    var length = await imageFile.length();
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + accessToken
+    };
+    var timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    // string to uri
+    var uri = Uri.parse(Constants.BASE_URL + 'utils/uploadimage/');
+    var request = new http.MultipartRequest("POST", uri);
+    var multipartFileSign = new http.MultipartFile('file', stream, length,
+        filename: timeStamp + basename(imageFile.path));
+    request.files.add(multipartFileSign);
+    request.headers.addAll(headers);
+    var response = await request.send();
+    // listen for response
+    response.stream.transform(utf8.decoder).listen((value) {
+      if ('Internal Server Error' == value) {
+        Toast.show("Image Upload Failed Internal Server Error.", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      } else {
+        var jsonData = json.decode(value);
+        var fileName = jsonData['filename'];
+        setState(() {
+          payload['images'].add(fileName);
+        });
+        Toast.show("Image Uploaded Successfully!", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
+    });
   }
 }

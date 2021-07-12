@@ -90,7 +90,7 @@ class TabView extends StatelessWidget {
                 ),
               ],
             ),
-            title: Text("Hospection",
+            title: Text("Lab Tech",
                 style:
                     TextStyle(fontFamily: "BarlowBold", color: Colors.white)),
           ),
