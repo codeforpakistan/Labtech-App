@@ -188,9 +188,17 @@ class _MySurveyState extends State<SurveyView> {
       result.results.asMap().forEach((key, value) {
         var id = value?.results[0]?.id?.id;
         if (id != 'null') {
-          this.payload['answers'][int.parse(id)]['answer'] =
-              value?.results[0]?.valueIdentifier;
-          print(this.payload['answers'][int.parse(id)]['answer']);
+          if (int.parse(id) > this.payload['answers'].length) {
+            this.payload['answers'].add({
+              'answer': value?.results[0]?.valueIdentifier,
+              'comment': value?.results[0]?.valueIdentifier,
+              'question': null
+            });
+          } else {
+            this.payload['answers'][int.parse(id)]['answer'] =
+                value?.results[0]?.valueIdentifier;
+            print(this.payload['answers'][int.parse(id)]['answer']);
+          }
         }
       });
       var accessToken = Constants.prefs.getString('access_token');
@@ -272,14 +280,14 @@ class _MySurveyState extends State<SurveyView> {
               answerFormat: SingleChoiceAnswerFormat(
                   defaultSelection: null, textChoices: choices)))
         });
-    // steps.add(QuestionStep(
-    //   id: StepIdentifier(id: this.questions.length.toString()),
-    //   title: 'Comments',
-    //   text: 'Please Enter you remarks',
-    //   answerFormat: TextAnswerFormat(
-    //     maxLines: 10,
-    //   ),
-    // ));
+    steps.add(QuestionStep(
+      id: StepIdentifier(id: (this.questions.length + 1).toString()),
+      title: 'Comments',
+      text: 'Please Enter you remarks',
+      answerFormat: TextAnswerFormat(
+        maxLines: 10,
+      ),
+    ));
     steps.add(CompletionStep(
       id: StepIdentifier(id: 'null'),
       text: 'Thanks for taking the survey, we will contact you soon!',

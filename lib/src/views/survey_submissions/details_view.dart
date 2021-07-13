@@ -26,7 +26,6 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
       },
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
-    print(data);
     return data;
   }
 
@@ -132,9 +131,11 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
                   Expanded(
                     child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: snapshot.data['answers'].length + 1,
+                        itemCount: snapshot.data['answers'].length,
                         itemBuilder: (context, index) {
-                          if (index >= snapshot.data['answers'].length) {
+                          if (index == (snapshot.data['answers'].length - 1) &&
+                              snapshot.data['answers'][index]['comment'] !=
+                                  null) {
                             return Padding(
                               padding: const EdgeInsets.only(
                                   top: 20.0,
@@ -157,11 +158,14 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
                                               fontWeight: FontWeight.bold,
                                             )),
                                       ),
-                                      Text(snapshot.data['comment']),
+                                      Text(snapshot.data['answers'][index]
+                                          ['comment']),
                                     ]),
                               ),
                             );
-                          } else {
+                          } else if (snapshot.data['answers'][index]
+                                  ["question"] !=
+                              null) {
                             return ListTile(
                               leading: snapshot.data['answers'][index]
                                           ["answer"] !=
