@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:geolocator/geolocator.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
@@ -24,7 +24,7 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    fetchLocation();
+    // fetchLocation();
     super.initState();
   }
 
@@ -217,12 +217,12 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void fetchLocation() async {
-    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (isLocationServiceEnabled) {
-      print(isLocationServiceEnabled);
-    } else {
-      await Geolocator.requestPermission();
-    }
-  }
+  // void fetchLocation() async {
+  //   bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (isLocationServiceEnabled) {
+  //     print(isLocationServiceEnabled);
+  //   } else {
+  //     await Geolocator.requestPermission();
+  //   }
+  // }
 }
