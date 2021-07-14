@@ -44,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.org.lab-tech"
+        applicationId "com.org.lab_tech"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
