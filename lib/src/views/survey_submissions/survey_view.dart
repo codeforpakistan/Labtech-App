@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:hospection/src/models/survey_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
-import 'dart:io';
 import 'package:async/async.dart';
 
 class SurveyView extends StatefulWidget {
@@ -253,24 +252,24 @@ class _MySurveyState extends State<SurveyView> {
 
   submitSurvey(SurveyResult result) async {
     try {
+      result.results.asMap().forEach((key, value) {
+        var id = value?.results[0]?.id?.id;
+        if (id != 'null') {
+          if (int.parse(id) > this.payload['answers'].length) {
+            this.payload['answers'].add({
+              'answer': value?.results[0]?.valueIdentifier,
+              'comment': value?.results[0]?.valueIdentifier,
+              'question': null
+            });
+          } else {
+            this.payload['answers'][int.parse(id)]['answer'] =
+                value?.results[0]?.valueIdentifier;
+            print(this.payload['answers'][int.parse(id)]['answer']);
+          }
+        }
+      });
       var hasInternet = await _checkInternetConnection();
       if (hasInternet) {
-        result.results.asMap().forEach((key, value) {
-          var id = value?.results[0]?.id?.id;
-          if (id != 'null') {
-            if (int.parse(id) > this.payload['answers'].length) {
-              this.payload['answers'].add({
-                'answer': value?.results[0]?.valueIdentifier,
-                'comment': value?.results[0]?.valueIdentifier,
-                'question': null
-              });
-            } else {
-              this.payload['answers'][int.parse(id)]['answer'] =
-                  value?.results[0]?.valueIdentifier;
-              print(this.payload['answers'][int.parse(id)]['answer']);
-            }
-          }
-        });
         var accessToken = Constants.prefs.getString('access_token');
         var url = Constants.BASE_URL + 'submissions/';
         var data = json.encode(this.payload);
