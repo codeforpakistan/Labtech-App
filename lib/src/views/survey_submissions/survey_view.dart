@@ -252,57 +252,69 @@ class _MySurveyState extends State<SurveyView> {
   }
 
   submitSurvey(SurveyResult result) async {
-    var hasInternet = await _checkInternetConnection();
-    if (hasInternet) {
-      result.results.asMap().forEach((key, value) {
-        var id = value?.results[0]?.id?.id;
-        if (id != 'null') {
-          print(id);
-          this.payload['answers'][int.parse(id)]['answer'] =
-            value?.results[0]?.valueIdentifier;
-          print(this.payload['answers'][int.parse(id)]['answer']);
+    try {
+      var hasInternet = await _checkInternetConnection();
+      if (hasInternet) {
+        result.results.asMap().forEach((key, value) {
+          var id = value?.results[0]?.id?.id;
+          if (id != 'null') {
+            if (int.parse(id) > this.payload['answers'].length) {
+              this.payload['answers'].add({
+                'answer': value?.results[0]?.valueIdentifier,
+                'comment': value?.results[0]?.valueIdentifier,
+                'question': null
+              });
+            } else {
+              this.payload['answers'][int.parse(id)]['answer'] =
+                  value?.results[0]?.valueIdentifier;
+              print(this.payload['answers'][int.parse(id)]['answer']);
+            }
+          }
+        });
+        var accessToken = Constants.prefs.getString('access_token');
+        var url = Constants.BASE_URL + 'submissions/';
+        var data = json.encode(this.payload);
+        var response = await http.post(url,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $accessToken',
+            },
+            body: data);
+        if (response.statusCode == 200) {
+          Toast.show("Survey submitted!", this.context,
+              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+          // var jsonData = json.decode(response.body);
+          setState(() {
+            Navigator.pushReplacementNamed(this.context, '/home');
+          });
+        } else {
+          this.processing = false;
+          print('something went wrong');
+          Toast.show("Server Error", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+          print(response.statusCode);
         }
-      });
-      var accessToken = Constants.prefs.getString('access_token');
-      var url = Constants.BASE_URL + 'submissions/';
-      var data = json.encode(this.payload);
-      var response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: data);
-      if (response.statusCode == 200) {
-        this.processing = false;
-        Toast.show("Survey submitted!", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-        // var jsonData = json.decode(response.body);
-        setState(() {
-          Navigator.pushReplacementNamed(this.context, '/home');
-        });
       } else {
-        this.processing = false;
-        print('something went wrong');
-        Toast.show("Server Error", this.context,
+        Toast.show("No internet! Saving survey response to upload later", this.context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+          print('_addSurveyInHive');
+        // save in hive
+        print('saving in hive');
+        printWrapped(json.encode(this.payload));
+        var hiveResp = await _addSurveyInHive(this.payload, this.surveyKey);
+        if (hiveResp) {
+          setState(() {
+            Navigator.pushReplacementNamed(this.context, '/home');
+          });
+        } else {
+          Toast.show("Server Error. Please contact support", this.context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-        print(response.statusCode);
+        }
       }
-    } else {
-      Toast.show("No internet! Saving survey response to upload later", this.context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-        print('_addSurveyInHive');
-      // save in hive
-      print('saving in hive');
-      printWrapped(json.encode(this.payload));
-      var hiveResp = await _addSurveyInHive(this.payload, this.surveyKey);
-      if (hiveResp) {
-        setState(() {
-          Navigator.pushReplacementNamed(this.context, '/home');
-        });
-      } else {
-        Toast.show("Server Error. Please contact support", this.context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      }
+    } catch (error) {
+      Toast.show("Submission Error", this.context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      print(error);
     }
   }
 
@@ -358,6 +370,7 @@ class _MySurveyState extends State<SurveyView> {
                   defaultSelection: null, textChoices: choices)))
         });
     steps.add(QuestionStep(
+      id: StepIdentifier(id: (this.questions.length + 1).toString()),
       title: 'Comments',
       text: 'Please Enter you remarks',
       answerFormat: TextAnswerFormat(
