@@ -17,6 +17,7 @@ class SurveyView extends StatefulWidget {
 class _MySurveyState extends State<SurveyView> {
   String departmentName;
   String hospitalName;
+  String moduleName;
   dynamic payload;
   List<dynamic> questions = [];
   List<File> imageFiles = [];
@@ -178,6 +179,7 @@ class _MySurveyState extends State<SurveyView> {
     setState(() {
       departmentName = dataFromDepartmentScreen['dept_name'];
       hospitalName = dataFromDepartmentScreen['hospital_name'];
+      moduleName = dataFromDepartmentScreen['module_name'];
     });
     var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
     this.setDefaultAnswers(data.first);
@@ -247,6 +249,11 @@ class _MySurveyState extends State<SurveyView> {
     payloadFill['survey_id'] = data['id'];
     payloadFill['lat'] = "0.0";
     payloadFill['lng'] = "0.0";
+    payloadFill['meta'] = {
+      'hospitalName': this.hospitalName,
+      'indicatorName': this.departmentName,
+      'moduleName': this.moduleName
+    };
     setState(() => {
           questions = list,
           payload = payloadFill,

@@ -194,6 +194,8 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
                               title: Text(
                                   snapshot.data['answers'][index]["question"]),
                             );
+                          } else {
+                            return null;
                           }
                         }),
                   ),

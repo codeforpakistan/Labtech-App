@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 
 class HospitalList extends StatefulWidget {
   final bool isFromProgressView;
-  const HospitalList({Key key, this.isFromProgressView, bool})
+  final bool isFromSubmittedView;
+  const HospitalList(
+      {Key key, this.isFromProgressView, bool, this.isFromSubmittedView})
       : super(key: key);
   @override
   _HospitalListState createState() => _HospitalListState();
@@ -15,13 +16,12 @@ class HospitalList extends StatefulWidget {
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Future getHospitalData() async {
-    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (isLocationServiceEnabled) {
-      print(isLocationServiceEnabled);
-    } else {
-      await Geolocator.requestPermission();
-    }
+    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (isLocationServiceEnabled) {
+    //   print(isLocationServiceEnabled);
+    // } else {
+    //   await Geolocator.requestPermission();
+    // }
 
     var url = Constants.BASE_URL + "hospitals/";
     var accessToken = Constants.prefs.getString('access_token');
@@ -41,15 +41,15 @@ class _HospitalListState extends State<HospitalList> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    // _getCurrentLocation();
   }
 
-  void _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    Constants.prefs.setDouble('latitude', position.latitude);
-    Constants.prefs.setDouble('longitude', position.longitude);
-  }
+  // void _getCurrentLocation() async {
+  //   final position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  //   Constants.prefs.setDouble('latitude', position.latitude);
+  //   Constants.prefs.setDouble('longitude', position.longitude);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class _HospitalListState extends State<HospitalList> {
                         "Some unknown error has occurred, please contact your system administrator"));
               }
               return ListView.builder(
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data != null ? snapshot.data.length : 0,
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
@@ -89,11 +89,11 @@ class _HospitalListState extends State<HospitalList> {
                             Text("Address: ${snapshot.data[index]["address"]}"),
                         onTap: () {
                           _navigateAndDisplaySurvey(
-                            context,
-                            snapshot.data[index]["id"],
-                            snapshot.data[index]['name'],
-                            widget.isFromProgressView,
-                          );
+                              context,
+                              snapshot.data[index]["id"],
+                              snapshot.data[index]['name'],
+                              widget.isFromProgressView,
+                              widget.isFromSubmittedView);
                         },
                       ),
                     ),
@@ -113,11 +113,12 @@ class _HospitalListState extends State<HospitalList> {
   }
 
   _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName,
-      isFromProgressView) async {
+      isFromProgressView, isFromSubmittedView) async {
     Navigator.pushNamed(context, "/department-list", arguments: {
       "hospital_id": hospitalId,
       "hospital_name": hospitalName,
-      "isFromProgressView": isFromProgressView
+      "isFromProgressView": isFromProgressView,
+      "isFromSubmittedView": isFromSubmittedView
     });
   }
 }
