@@ -2,15 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart' hide Step;
 import 'package:survey_kit/survey_kit.dart';
-import 'package:hospection/src/utils/constants.dart';
+import 'package:labtech/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:hospection/src/models/survey_model.dart';
+import 'package:labtech/src/models/survey_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
+import 'package:labtech/src/utils/common.dart';
+import 'package:labtech/src/services/data_service.dart';
+import 'package:labtech/src/services/storage_service.dart';
 
 class SurveyView extends StatefulWidget {
   @override
@@ -25,6 +27,9 @@ class _MySurveyState extends State<SurveyView> {
   bool processing = false;
   String surveyKey;
   List<File> imageFiles = [];
+  DataService dataService = new DataService();
+  StorageService storageService = new StorageService();
+  Common common = new Common();
 
   @override
   Widget build(BuildContext context) {
@@ -195,24 +200,6 @@ class _MySurveyState extends State<SurveyView> {
     _listKeysInHive();
   }
 
-  Future<bool> _addSurveyInHive(dynamic data, String key) async {
-    try {
-      if (!Hive.isAdapterRegistered(1)) {
-        Hive.registerAdapter(SurveyModelAdapter());
-      };
-      var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
-      // construct Survey instance
-      var surveyItem = SurveyModel(int.parse(key), data, new DateTime.now());
-      box.put(this.surveyKey, surveyItem);
-      print('Survey stored in hive');
-      return true;
-    } catch (error)  {
-      print('hive error');
-      print(error);
-      return false;
-    }
-  }
-
   _listKeysInHive() async {
     try {
       if (!Hive.isAdapterRegistered(1)) {
@@ -238,18 +225,6 @@ class _MySurveyState extends State<SurveyView> {
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
 
-  Future<bool> _checkInternetConnection() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      return false;
-    }
-  }
-
   submitSurvey(SurveyResult result) async {
     try {
       result.results.asMap().forEach((key, value) {
@@ -268,39 +243,26 @@ class _MySurveyState extends State<SurveyView> {
           }
         }
       });
-      var hasInternet = await _checkInternetConnection();
+      var hasInternet = await common.hasInternetConnection();
       if (hasInternet) {
-        var accessToken = Constants.prefs.getString('access_token');
-        var url = Constants.BASE_URL + 'submissions/';
-        var data = json.encode(this.payload);
-        var response = await http.post(url,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $accessToken',
-            },
-            body: data);
-        if (response.statusCode == 200) {
+        var response = await dataService.submitSurvey(this.payload);
+        if (response) {
           Toast.show("Survey submitted!", this.context,
-              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-          // var jsonData = json.decode(response.body);
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
           setState(() {
             Navigator.pushReplacementNamed(this.context, '/home');
           });
         } else {
           this.processing = false;
-          print('something went wrong');
           Toast.show("Server Error", this.context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-          print(response.statusCode);
         }
       } else {
         Toast.show("No internet! Saving survey response to upload later", this.context,
           duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-          print('_addSurveyInHive');
         // save in hive
         print('saving in hive');
-        printWrapped(json.encode(this.payload));
-        var hiveResp = await _addSurveyInHive(this.payload, this.surveyKey);
+        var hiveResp = await storageService.addSurvey(this.payload, this.surveyKey);
         if (hiveResp) {
           setState(() {
             Navigator.pushReplacementNamed(this.context, '/home');

@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:hospection/src/utils/constants.dart';
+import 'package:labtech/src/utils/constants.dart';
 
 class ImageView extends StatefulWidget {
   final String tag;
