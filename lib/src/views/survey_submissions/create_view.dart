@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
-import 'package:hospection/src/utils/constants.dart';
+import 'package:labtech/src/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:hospection/src/widgets/switch_widget.dart';
+import 'package:labtech/src/widgets/switch_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hospection/src/views/auth/login_view.dart';
-import 'package:hospection/src/views/departments/list_view.dart';
-import 'package:hospection/src/views/hospitals/list_view.dart';
-// import 'package:hospection/src/views/survey_submissions/create_view.dart';
-import 'package:hospection/src/views/survey_submissions/survey_view.dart';
-import 'package:hospection/src/views/survey_submissions/details_view.dart';
-import 'package:hospection/src/views/survey_submissions/list_view.dart';
-import 'package:hospection/src/utils/constants.dart';
+import 'package:labtech/src/views/auth/login_view.dart';
+import 'package:labtech/src/views/departments/list_view.dart';
+import 'package:labtech/src/views/hospitals/list_view.dart';
+// import 'package:labtech/src/views/survey_submissions/create_view.dart';
+import 'package:labtech/src/views/survey_submissions/survey_view.dart';
+import 'package:labtech/src/views/survey_submissions/details_view.dart';
+import 'package:labtech/src/views/survey_submissions/list_view.dart';
+import 'package:labtech/src/utils/constants.dart';
 
 class TabView extends StatelessWidget {
   @override

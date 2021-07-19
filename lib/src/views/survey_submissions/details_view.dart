@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:hospection/src/utils/constants.dart';
-import 'package:hospection/src/views/survey_submissions/image_view.dart';
+import 'package:labtech/src/utils/constants.dart';
+import 'package:labtech/src/views/survey_submissions/image_view.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

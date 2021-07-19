@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hospection/src/app.dart';
-import 'package:hospection/src/utils/constants.dart';
+import 'package:labtech/src/app.dart';
+import 'package:labtech/src/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
