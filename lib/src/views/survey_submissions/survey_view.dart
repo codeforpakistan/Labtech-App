@@ -6,7 +6,6 @@ import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:hospection/src/models/survey_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -205,7 +204,6 @@ class _MySurveyState extends State<SurveyView> {
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter(SurveyModelAdapter());
       }
-      ;
       var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
       // construct Survey instance
       var surveyItem = SurveyModel(int.parse(key), data, new DateTime.now());
@@ -224,7 +222,6 @@ class _MySurveyState extends State<SurveyView> {
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter(SurveyModelAdapter());
       }
-      ;
       var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
       print('box.keys');
       print(box.keys);
