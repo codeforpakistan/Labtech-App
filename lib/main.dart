@@ -16,7 +16,9 @@ Future main() async {
 _initialStorageSettings() async {
   print('_initialStorageSettings');
   Directory appDocDirectory = await getApplicationDocumentsDirectory();
-  Directory directory = await new Directory(appDocDirectory.path + '/' + Constants.APP_EXTERNAL_DIR_NAME).create(recursive: true);
+  Directory directory = await new Directory(
+          appDocDirectory.path + '/' + Constants.APP_EXTERNAL_DIR_NAME)
+      .create(recursive: true);
   print('directory.path ' + directory.path);
   Hive.init(directory.path);
 }

@@ -56,7 +56,7 @@ class HosepctionState extends State<Hosepction> {
           box.delete(k);
         });
       }
-    }  catch (error)  {
+    } catch (error) {
       print('hive error');
       print(error);
       return false;
@@ -67,11 +67,11 @@ class HosepctionState extends State<Hosepction> {
     var url = Constants.BASE_URL + 'submissions/';
     var payload = json.encode(data);
     var response = await http.post(url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: payload);
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: payload);
     if (response.statusCode == 200) {
       print('submitted success');
     } else {

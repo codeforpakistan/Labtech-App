@@ -204,14 +204,15 @@ class _MySurveyState extends State<SurveyView> {
     try {
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter(SurveyModelAdapter());
-      };
+      }
+      ;
       var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
       // construct Survey instance
       var surveyItem = SurveyModel(int.parse(key), data, new DateTime.now());
       box.put(this.surveyKey, surveyItem);
       print('Survey stored in hive');
       return true;
-    } catch (error)  {
+    } catch (error) {
       print('hive error');
       print(error);
       return false;
@@ -222,7 +223,8 @@ class _MySurveyState extends State<SurveyView> {
     try {
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter(SurveyModelAdapter());
-      };
+      }
+      ;
       var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
       print('box.keys');
       print(box.keys);
@@ -231,14 +233,14 @@ class _MySurveyState extends State<SurveyView> {
         SurveyModel survey = box.get(k);
         printWrapped(json.encode(survey.payload));
       });
-    }  catch (error)  {
+    } catch (error) {
       print('hive error');
       print(error);
       return false;
     }
   }
 
-   void printWrapped(String text) {
+  void printWrapped(String text) {
     final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
   }
@@ -295,13 +297,14 @@ class _MySurveyState extends State<SurveyView> {
           this.processing = false;
           print('something went wrong');
           Toast.show("Server Error", this.context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
           print(response.statusCode);
         }
       } else {
-        Toast.show("No internet! Saving survey response to upload later", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-          print('_addSurveyInHive');
+        Toast.show(
+            "No internet! Saving survey response to upload later", this.context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+        print('_addSurveyInHive');
         // save in hive
         print('saving in hive');
         printWrapped(json.encode(this.payload));
@@ -312,7 +315,7 @@ class _MySurveyState extends State<SurveyView> {
           });
         } else {
           Toast.show("Server Error. Please contact support", this.context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         }
       }
     } catch (error) {
