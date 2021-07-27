@@ -15,15 +15,16 @@ class HospitalList extends StatefulWidget {
 
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  Future getHospitalData() async {
+  Future getHospitalData(shouldFetchLabSubmission) async {
     // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
     // if (isLocationServiceEnabled) {
     //   print(isLocationServiceEnabled);
     // } else {
     //   await Geolocator.requestPermission();
     // }
-
-    var url = Constants.BASE_URL + "hospitals/";
+    var url = shouldFetchLabSubmission == true
+        ? Constants.BASE_URL + "submissions/by-labs"
+        : Constants.BASE_URL + "hospitals/";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
@@ -34,7 +35,6 @@ class _HospitalListState extends State<HospitalList> {
       },
     );
     var data = json.decode(utf8.decode(response.bodyBytes));
-    print(data);
     return data;
   }
 
@@ -56,7 +56,8 @@ class _HospitalListState extends State<HospitalList> {
     return Scaffold(
       key: _scaffoldKey,
       body: FutureBuilder(
-        future: getHospitalData(),
+        future: getHospitalData(
+            widget.isFromSubmittedView || widget.isFromProgressView),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -85,13 +86,18 @@ class _HospitalListState extends State<HospitalList> {
                       child: ListTile(
                         leading: Icon(Icons.health_and_safety_outlined),
                         title: Text(snapshot.data[index]['name']),
-                        subtitle:
-                            Text("Address: ${snapshot.data[index]["address"]}"),
+                        subtitle: Text(
+                            "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}"),
                         onTap: () {
                           _navigateAndDisplaySurvey(
                               context,
-                              snapshot.data[index]["id"],
+                              snapshot.data[index]["id"] != null
+                                  ? snapshot.data[index]["id"]
+                                  : snapshot.data[index]["_id"],
                               snapshot.data[index]['name'],
+                              snapshot.data[index]['submissions'] != null
+                                  ? snapshot.data[index]['submissions']
+                                  : [],
                               widget.isFromProgressView,
                               widget.isFromSubmittedView);
                         },
@@ -113,8 +119,9 @@ class _HospitalListState extends State<HospitalList> {
   }
 
   _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName,
-      isFromProgressView, isFromSubmittedView) async {
+      submissions, isFromProgressView, isFromSubmittedView) async {
     Navigator.pushNamed(context, "/department-list", arguments: {
+      "submissions": submissions,
       "hospital_id": hospitalId,
       "hospital_name": hospitalName,
       "isFromProgressView": isFromProgressView,

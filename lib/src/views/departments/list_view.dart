@@ -12,6 +12,8 @@ class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getDepartmentData(hospitalId) async {
+    var data = [];
+    print(hospitalId);
     var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
@@ -22,8 +24,20 @@ class _DepartmentListState extends State<DepartmentList> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    var data = json.decode(utf8.decode(response.bodyBytes));
+    data = json.decode(utf8.decode(response.bodyBytes));
     return data;
+  }
+
+  isHaveSubmission(submissions, indicatorName) {
+    var found = false;
+    if (submissions != null && submissions.length > 0) {
+      submissions.forEach((each) => {
+            if (each['indicator_name'] != null &&
+                each['indicator_name'] == indicatorName)
+              {found = true}
+          });
+    }
+    return found;
   }
 
   @override
@@ -34,7 +48,7 @@ class _DepartmentListState extends State<DepartmentList> {
     var hospitalName = dataFromHospitalScreen['hospital_name'];
     final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
     final isFromSubmittedView = dataFromHospitalScreen['isFromSubmittedView'];
-
+    final submissions = dataFromHospitalScreen['submissions'];
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -83,9 +97,8 @@ class _DepartmentListState extends State<DepartmentList> {
                       ),
                       child: ListTile(
                         leading: isFromProgressView
-                            ? Icon(snapshot.data[index - 1]
-                                        ["have_submission"] ==
-                                    true
+                            ? Icon(isHaveSubmission(submissions,
+                                    snapshot.data[index - 1]["name"])
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
@@ -102,6 +115,7 @@ class _DepartmentListState extends State<DepartmentList> {
                               hospitalName,
                               snapshot.data[index - 1]["name"],
                               snapshot.data[index - 1]['module_name'],
+                              submissions,
                               isFromProgressView,
                               isFromSubmittedView);
                         },
@@ -129,6 +143,7 @@ class _DepartmentListState extends State<DepartmentList> {
       hospitalName,
       deptName,
       moduleName,
+      submissions,
       isFromProgressView,
       isFromSubmittedView) async {
     if (!isFromProgressView && !isFromSubmittedView) {
@@ -143,7 +158,11 @@ class _DepartmentListState extends State<DepartmentList> {
       Navigator.pushNamed(context, "/submitted-survey-list", arguments: {
         'hospitalName': hospitalName,
         'hospitalId': hospitalId,
-        'departmentId': departmentId
+        'departmentId': departmentId,
+        'submissions': submissions,
+        "hospital_name": hospitalName,
+        "indicator_name": deptName,
+        "module_name": moduleName,
       });
     }
   }

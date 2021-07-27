@@ -18,6 +18,8 @@ class _MySurveyState extends State<SurveyView> {
   String departmentName;
   String hospitalName;
   String moduleName;
+  int hospitalId;
+  int departmentId;
   dynamic payload;
   List<dynamic> questions = [];
   List<File> imageFiles = [];
@@ -174,14 +176,15 @@ class _MySurveyState extends State<SurveyView> {
   Future getSurveyQuestionnaireForState() async {
     final Map<String, Object> dataFromDepartmentScreen =
         ModalRoute.of(this.context).settings.arguments;
-    var hospitalId = dataFromDepartmentScreen['hospital_id'];
-    var departmentId = dataFromDepartmentScreen['department_id'];
     setState(() {
+      hospitalId = dataFromDepartmentScreen['hospital_id'];
+      departmentId = dataFromDepartmentScreen['department_id'];
       departmentName = dataFromDepartmentScreen['dept_name'];
       hospitalName = dataFromDepartmentScreen['hospital_name'];
       moduleName = dataFromDepartmentScreen['module_name'];
     });
-    var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
+    var data =
+        await getSurveyQuestionnaire(this.hospitalId, this.departmentId, true);
     this.setDefaultAnswers(data.first);
   }
 
@@ -252,7 +255,10 @@ class _MySurveyState extends State<SurveyView> {
     payloadFill['meta'] = {
       'hospitalName': this.hospitalName,
       'indicatorName': this.departmentName,
-      'moduleName': this.moduleName
+      'moduleName': this.moduleName,
+      'id': this.hospitalId,
+      'indicatorId': this.departmentId,
+      // 'userName': this.userId,
     };
     setState(() => {
           questions = list,
