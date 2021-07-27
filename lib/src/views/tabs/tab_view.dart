@@ -96,9 +96,12 @@ class TabView extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              HospitalList(isFromProgressView: false),
-              HospitalList(isFromProgressView: true),
-              SubmittedSurveyList(),
+              HospitalList(
+                  isFromProgressView: false, isFromSubmittedView: false),
+              HospitalList(
+                  isFromProgressView: true, isFromSubmittedView: false),
+              HospitalList(
+                  isFromProgressView: false, isFromSubmittedView: true),
             ],
           ),
         ),
@@ -109,7 +112,8 @@ class TabView extends StatelessWidget {
         '/home': (context) => TabView(),
         '/submitted-survey-list': (context) => SubmittedSurveyList(),
         '/show-survey-details': (context) => ShowSurveyDetails(),
-        '/hospital-list': (context) => HospitalList(isFromProgressView: false),
+        '/hospital-list': (context) =>
+            HospitalList(isFromProgressView: false, isFromSubmittedView: false),
         '/department-list': (context) => DepartmentList(),
         '/submit-survey': (context) => SurveyView(),
       },

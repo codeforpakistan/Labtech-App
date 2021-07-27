@@ -12,6 +12,8 @@ class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getDepartmentData(hospitalId) async {
+    var data = [];
+    print(hospitalId);
     var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
@@ -22,9 +24,20 @@ class _DepartmentListState extends State<DepartmentList> {
         'Authorization': 'Bearer $accessToken',
       },
     );
-    var data = json.decode(utf8.decode(response.bodyBytes));
-    print(data);
+    data = json.decode(utf8.decode(response.bodyBytes));
     return data;
+  }
+
+  isHaveSubmission(submissions, indicatorName) {
+    var found = false;
+    if (submissions != null && submissions.length > 0) {
+      submissions.forEach((each) => {
+            if (each['indicator_name'] != null &&
+                each['indicator_name'] == indicatorName)
+              {found = true}
+          });
+    }
+    return found;
   }
 
   @override
@@ -34,7 +47,8 @@ class _DepartmentListState extends State<DepartmentList> {
     var hospitalId = dataFromHospitalScreen['hospital_id'];
     var hospitalName = dataFromHospitalScreen['hospital_name'];
     final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
-    print(isFromProgressView);
+    final isFromSubmittedView = dataFromHospitalScreen['isFromSubmittedView'];
+    final submissions = dataFromHospitalScreen['submissions'];
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -83,9 +97,8 @@ class _DepartmentListState extends State<DepartmentList> {
                       ),
                       child: ListTile(
                         leading: isFromProgressView
-                            ? Icon(snapshot.data[index - 1]
-                                        ["have_submission"] ==
-                                    true
+                            ? Icon(isHaveSubmission(submissions,
+                                    snapshot.data[index - 1]["name"])
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
@@ -95,12 +108,16 @@ class _DepartmentListState extends State<DepartmentList> {
                             snapshot.data[index - 1]['module_name'] +
                             ')'),
                         onTap: () {
-                          _navigateAndDisplaySurvey(
+                          _navigateToNextView(
                               context,
                               snapshot.data[index - 1]["hospital_id"],
                               snapshot.data[index - 1]["id"],
                               hospitalName,
-                              snapshot.data[index - 1]["name"]);
+                              snapshot.data[index - 1]["name"],
+                              snapshot.data[index - 1]['module_name'],
+                              submissions,
+                              isFromProgressView,
+                              isFromSubmittedView);
                         },
                       ),
                     );
@@ -119,13 +136,34 @@ class _DepartmentListState extends State<DepartmentList> {
     );
   }
 
-  _navigateAndDisplaySurvey(BuildContext context, hospitalId, departmentId,
-      hospitalName, deptName) async {
-    Navigator.pushNamed(context, "/submit-survey", arguments: {
-      "hospital_id": hospitalId,
-      "department_id": departmentId,
-      "hospital_name": hospitalName,
-      "dept_name": deptName,
-    });
+  _navigateToNextView(
+      BuildContext context,
+      hospitalId,
+      departmentId,
+      hospitalName,
+      deptName,
+      moduleName,
+      submissions,
+      isFromProgressView,
+      isFromSubmittedView) async {
+    if (!isFromProgressView && !isFromSubmittedView) {
+      Navigator.pushNamed(context, "/submit-survey", arguments: {
+        "hospital_id": hospitalId,
+        "department_id": departmentId,
+        "hospital_name": hospitalName,
+        "dept_name": deptName,
+        "module_name": moduleName,
+      });
+    } else if (isFromSubmittedView) {
+      Navigator.pushNamed(context, "/submitted-survey-list", arguments: {
+        'hospitalName': hospitalName,
+        'hospitalId': hospitalId,
+        'departmentId': departmentId,
+        'submissions': submissions,
+        "hospital_name": hospitalName,
+        "indicator_name": deptName,
+        "module_name": moduleName,
+      });
+    }
   }
 }

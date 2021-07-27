@@ -20,6 +20,9 @@ class SurveyView extends StatefulWidget {
 class _MySurveyState extends State<SurveyView> {
   String departmentName;
   String hospitalName;
+  String moduleName;
+  int hospitalId;
+  int departmentId;
   dynamic payload;
   List<dynamic> questions = [];
   bool processing = false;
@@ -179,14 +182,16 @@ class _MySurveyState extends State<SurveyView> {
   Future getSurveyQuestionnaireForState() async {
     final Map<String, Object> dataFromDepartmentScreen =
         ModalRoute.of(this.context).settings.arguments;
-    var hospitalId = dataFromDepartmentScreen['hospital_id'];
-    var departmentId = dataFromDepartmentScreen['department_id'];
     setState(() {
+      hospitalId = dataFromDepartmentScreen['hospital_id'];
+      departmentId = dataFromDepartmentScreen['department_id'];
       departmentName = dataFromDepartmentScreen['dept_name'];
       hospitalName = dataFromDepartmentScreen['hospital_name'];
+      moduleName = dataFromDepartmentScreen['module_name'];
       surveyKey = hospitalId.toString() + departmentId.toString();
     });
-    var data = await getSurveyQuestionnaire(hospitalId, departmentId, true);
+    var data =
+        await getSurveyQuestionnaire(this.hospitalId, this.departmentId, true);
     this.setDefaultAnswers(data.first);
   }
 
@@ -335,6 +340,14 @@ class _MySurveyState extends State<SurveyView> {
     payloadFill['survey_id'] = data['id'];
     payloadFill['lat'] = "0.0";
     payloadFill['lng'] = "0.0";
+    payloadFill['meta'] = {
+      'hospitalName': this.hospitalName,
+      'indicatorName': this.departmentName,
+      'moduleName': this.moduleName,
+      'id': this.hospitalId,
+      'indicatorId': this.departmentId,
+      // 'userName': this.userId,
+    };
     setState(() => {
           questions = list,
           payload = payloadFill,
