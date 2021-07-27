@@ -6,22 +6,16 @@ class SpashScreen extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Material(
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Image.asset(
-                  "assets/launcher.png",
-                  height: MediaQuery.of(context).size.height,
-                  fit: BoxFit.cover
-                ),
-              ]
-            )
-          )
-        )
-      ),
+          backgroundColor: Colors.white,
+          body: Material(
+              child: Center(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                Image.asset("assets/launcher.png",
+                    height: MediaQuery.of(context).size.height,
+                    fit: BoxFit.cover),
+              ])))),
     );
   }
 }
