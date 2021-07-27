@@ -32,11 +32,7 @@ jobs:
     
     # Check for any formatting issues in the code.
     - run: flutter format --set-exit-if-changed .
-    
-    # Try again for any formatting issues in the code.
-    - run: flutter format --set-exit-if-changed .
-    
-    
+  
     # Statically analyze the Dart code for any errors.
     - run: flutter analyze .
     
