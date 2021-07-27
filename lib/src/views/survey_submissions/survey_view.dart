@@ -1,7 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart' hide Step;
-import 'package:survey_kit/survey_kit.dart';
+import 'package:survey_kit/survey_kit.dart'
+    show
+        SurveyKit,
+        SurveyResult,
+        TaskIdentifier,
+        StepIdentifier,
+        OrderedTask,
+        SingleChoiceAnswerFormat,
+        CompletionStep,
+        QuestionStep,
+        Step,
+        InstructionStep,
+        TextChoice,
+        TextAnswerFormat;
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
