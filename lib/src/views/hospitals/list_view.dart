@@ -87,7 +87,11 @@ class _HospitalListState extends State<HospitalList> {
                         leading: Icon(Icons.health_and_safety_outlined),
                         title: Text(snapshot.data[index]['name']),
                         subtitle: Text(
-                            "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}"),
+                            "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}" +
+                                "\n" +
+                                (snapshot.data[0]['user'] != null
+                                    ? snapshot.data[0]['user']
+                                    : '')),
                         onTap: () {
                           _navigateAndDisplaySurvey(
                               context,
