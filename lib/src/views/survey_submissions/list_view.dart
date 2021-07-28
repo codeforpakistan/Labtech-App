@@ -47,7 +47,7 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
       // //   //   updatedList.add(value);
       // //   // }
       // // });
-      // print(updatedList);
+      print(data);
       return data;
     } catch (error) {
       print(error);
@@ -127,6 +127,10 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
                         subtitle: Text(new DateFormat.yMMMMEEEEd().format(
                                 DateTime.parse(
                                     snapshot.data[index]['created_date'])) +
+                            "\n" +
+                            (snapshot.data[index]['user'] != null
+                                ? snapshot.data[index]['user']
+                                : '') +
                             "\n" +
                             snapshot.data[index]['comment']),
                         onTap: () {

@@ -35,6 +35,7 @@ class _MySurveyState extends State<SurveyView> {
   String moduleName;
   int hospitalId;
   int departmentId;
+  int submissionNo;
   dynamic payload;
   List<dynamic> questions = [];
   bool processing = false;
@@ -199,6 +200,7 @@ class _MySurveyState extends State<SurveyView> {
       departmentId = dataFromDepartmentScreen['department_id'];
       departmentName = dataFromDepartmentScreen['dept_name'];
       hospitalName = dataFromDepartmentScreen['hospital_name'];
+      submissionNo = dataFromDepartmentScreen['submission_no'];
       moduleName = dataFromDepartmentScreen['module_name'];
       surveyKey = hospitalId.toString() + departmentId.toString();
     });
@@ -239,7 +241,6 @@ class _MySurveyState extends State<SurveyView> {
       print('box.keys');
       print(box.keys);
       box.keys.forEach((k) {
-        print(k);
         SurveyModel survey = box.get(k);
         printWrapped(json.encode(survey.payload));
       });
@@ -348,6 +349,7 @@ class _MySurveyState extends State<SurveyView> {
     });
     var payloadFill = {};
     payloadFill['comment'] = '';
+    payloadFill['submission_no'] = this.submissionNo;
     payloadFill['answers'] = list;
     payloadFill['images'] = [];
     payloadFill['survey_id'] = data['id'];
@@ -359,7 +361,6 @@ class _MySurveyState extends State<SurveyView> {
       'moduleName': this.moduleName,
       'id': this.hospitalId,
       'indicatorId': this.departmentId,
-      // 'userName': this.userId,
     };
     setState(() => {
           questions = list,

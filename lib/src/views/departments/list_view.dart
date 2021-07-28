@@ -42,13 +42,21 @@ class _DepartmentListState extends State<DepartmentList> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, Object> dataFromHospitalScreen =
+    final Map dataFromHospitalScreen =
         ModalRoute.of(context).settings.arguments;
     var hospitalId = dataFromHospitalScreen['hospital_id'];
     var hospitalName = dataFromHospitalScreen['hospital_name'];
     final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
     final isFromSubmittedView = dataFromHospitalScreen['isFromSubmittedView'];
     final submissions = dataFromHospitalScreen['submissions'];
+    int submissionNo = 0;
+    if (submissions != null) {
+      if (submissions != null && submissions.length > 0) {
+        submissions.forEach((each) => {
+              if (submissionNo == 0) {submissionNo = each['submission_no']}
+            });
+      }
+    }
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -117,7 +125,8 @@ class _DepartmentListState extends State<DepartmentList> {
                               snapshot.data[index - 1]['module_name'],
                               submissions,
                               isFromProgressView,
-                              isFromSubmittedView);
+                              isFromSubmittedView,
+                              submissionNo);
                         },
                       ),
                     );
@@ -145,12 +154,14 @@ class _DepartmentListState extends State<DepartmentList> {
       moduleName,
       submissions,
       isFromProgressView,
-      isFromSubmittedView) async {
-    if (!isFromProgressView && !isFromSubmittedView) {
+      isFromSubmittedView,
+      submissionNo) async {
+    if (!isFromSubmittedView) {
       Navigator.pushNamed(context, "/submit-survey", arguments: {
         "hospital_id": hospitalId,
         "department_id": departmentId,
         "hospital_name": hospitalName,
+        "submission_no": isFromProgressView ? submissionNo : 0,
         "dept_name": deptName,
         "module_name": moduleName,
       });
