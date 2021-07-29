@@ -83,7 +83,8 @@ class _HospitalListState extends State<HospitalList> {
                         ),
                       ),
                     ),
-                    child: Padding(
+                    child: ((widget.isFromSubmittedView && snapshot.data[index]['completed'] == true) || (!widget.isFromSubmittedView)) ? 
+                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: ListTile(
                         leading: Icon(Icons.health_and_safety_outlined),
@@ -121,7 +122,7 @@ class _HospitalListState extends State<HospitalList> {
                               widget.isFromSubmittedView);
                         },
                       ),
-                    ),
+                    ) : null,
                   );
                 },
               );
