@@ -83,46 +83,50 @@ class _HospitalListState extends State<HospitalList> {
                         ),
                       ),
                     ),
-                    child: ((widget.isFromSubmittedView && snapshot.data[index]['completed'] == true) || (!widget.isFromSubmittedView)) ? 
-                     Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ListTile(
-                        leading: Icon(Icons.health_and_safety_outlined),
-                        title: Text(snapshot.data[index]['name']),
-                        subtitle: Text(
-                            "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}" +
-                                "\n" +
-                                (snapshot.data[0]['user'] != null
-                                    ? snapshot.data[0]['user']
-                                    : '') +
-                                "\n" +
-                                (snapshot.data[0]['start_date'] != null
-                                    ? new DateFormat.yMMMMEEEEd().format(
-                                        DateTime.parse(
-                                            snapshot.data[index]['start_date']))
-                                    : '') +
-                                "\n" +
-                                (widget.isFromSubmittedView &&
-                                        snapshot.data[0]['end_date'] != null
-                                    ? new DateFormat.yMMMMEEEEd().format(
-                                        DateTime.parse(
-                                            snapshot.data[index]['end_date']))
-                                    : '')),
-                        onTap: () {
-                          _navigateAndDisplaySurvey(
-                              context,
-                              snapshot.data[index]["id"] != null
-                                  ? snapshot.data[index]["id"]
-                                  : snapshot.data[index]["_id"],
-                              snapshot.data[index]['name'],
-                              snapshot.data[index]['submissions'] != null
-                                  ? snapshot.data[index]['submissions']
-                                  : [],
-                              widget.isFromProgressView,
-                              widget.isFromSubmittedView);
-                        },
-                      ),
-                    ) : null,
+                    child: ((widget.isFromSubmittedView &&
+                                snapshot.data[index]['completed'] == true) ||
+                            (!widget.isFromSubmittedView))
+                        ? Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: ListTile(
+                              leading: Icon(Icons.health_and_safety_outlined),
+                              title: Text(snapshot.data[index]['name']),
+                              subtitle: Text(
+                                  "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}" +
+                                      "\n" +
+                                      (snapshot.data[0]['user'] != null
+                                          ? snapshot.data[0]['user']
+                                          : '') +
+                                      "\n" +
+                                      (snapshot.data[0]['start_date'] != null
+                                          ? new DateFormat.yMMMMEEEEd().format(
+                                              DateTime.parse(snapshot.data[index]
+                                                  ['start_date']))
+                                          : '') +
+                                      "\n" +
+                                      (widget.isFromSubmittedView &&
+                                              snapshot.data[0]['end_date'] !=
+                                                  null
+                                          ? new DateFormat.yMMMMEEEEd().format(
+                                              DateTime.parse(
+                                                  snapshot.data[index]['end_date']))
+                                          : '')),
+                              onTap: () {
+                                _navigateAndDisplaySurvey(
+                                    context,
+                                    snapshot.data[index]["id"] != null
+                                        ? snapshot.data[index]["id"]
+                                        : snapshot.data[index]["_id"],
+                                    snapshot.data[index]['name'],
+                                    snapshot.data[index]['submissions'] != null
+                                        ? snapshot.data[index]['submissions']
+                                        : [],
+                                    widget.isFromProgressView,
+                                    widget.isFromSubmittedView);
+                              },
+                            ),
+                          )
+                        : null,
                   );
                 },
               );
