@@ -3,6 +3,8 @@ import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class HospitalList extends StatefulWidget {
   final bool isFromProgressView;
   final bool isFromSubmittedView;
@@ -91,6 +93,19 @@ class _HospitalListState extends State<HospitalList> {
                                 "\n" +
                                 (snapshot.data[0]['user'] != null
                                     ? snapshot.data[0]['user']
+                                    : '') +
+                                "\n" +
+                                (snapshot.data[0]['start_date'] != null
+                                    ? new DateFormat.yMMMMEEEEd().format(
+                                        DateTime.parse(
+                                            snapshot.data[index]['start_date']))
+                                    : '') +
+                                "\n" +
+                                (widget.isFromSubmittedView &&
+                                        snapshot.data[0]['end_date'] != null
+                                    ? new DateFormat.yMMMMEEEEd().format(
+                                        DateTime.parse(
+                                            snapshot.data[index]['end_date']))
                                     : '')),
                         onTap: () {
                           _navigateAndDisplaySurvey(
