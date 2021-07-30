@@ -83,34 +83,37 @@ class _HospitalListState extends State<HospitalList> {
                         ),
                       ),
                     ),
+                    // (snapshot.data[0]['start_date'] != null
+                    //     ? "\n" +
+                    //         new DateFormat.yMMMMEEEEd().format(
+                    //             DateTime.parse(snapshot.data[index]
+                    //                 ['start_date']))
+                    //     : '') +
+                    // (widget.isFromSubmittedView &&
+                    //         snapshot.data[0]['end_date'] != null
+                    //     ? "\n" +
+                    //         new DateFormat.yMMMMEEEEd().format(
+                    //             DateTime.parse(snapshot.data[index]
+                    //                 ['end_date']))
+                    // : ''
+                    // ),
+
+                    //  "Start Date: ${snapshot.data[0]['start_date'] != null ?  "\n"  + new DateFormat.yMMMMEEEEd().format(
+                    //     DateTime.parse(snapshot.data[index]['start_date'])) : 'N/A'}" +
                     child: ((widget.isFromSubmittedView &&
                                 snapshot.data[index]['completed'] == true) ||
-                            (!widget.isFromSubmittedView))
+                            (widget.isFromProgressView) &&
+                                snapshot.data[index]['completed'] == false)
                         ? Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: ListTile(
                               leading: Icon(Icons.health_and_safety_outlined),
                               title: Text(snapshot.data[index]['name']),
-                              subtitle: Text(
-                                  "Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}" +
-                                      "\n" +
-                                      (snapshot.data[0]['user'] != null
-                                          ? snapshot.data[0]['user']
-                                          : '') +
-                                      "\n" +
-                                      (snapshot.data[0]['start_date'] != null
-                                          ? new DateFormat.yMMMMEEEEd().format(
-                                              DateTime.parse(snapshot.data[index]
-                                                  ['start_date']))
-                                          : '') +
-                                      "\n" +
-                                      (widget.isFromSubmittedView &&
-                                              snapshot.data[0]['end_date'] !=
-                                                  null
-                                          ? new DateFormat.yMMMMEEEEd().format(
-                                              DateTime.parse(
-                                                  snapshot.data[index]['end_date']))
-                                          : '')),
+                              subtitle: Text("Address: ${snapshot.data[index]["address"] != null ? snapshot.data[index]["address"] : 'N/A'}" +
+                                  "\n" +
+                                  "User: ${snapshot.data[0]['user'] != null ? snapshot.data[0]['user'] : 'N/A'}"
+                                      "${snapshot.data[0]['start_date'] != null ? '\nStart Date: ' + (new DateFormat.yMMMMEEEEd().format(DateTime.parse(snapshot.data[index]['start_date']))) : ''}" +
+                                  "${widget.isFromSubmittedView && snapshot.data[0]['end_date'] != null ? '\nEnd Date: ' + (new DateFormat.yMMMMEEEEd().format(DateTime.parse(snapshot.data[index]['end_date']))) : ''}"),
                               onTap: () {
                                 _navigateAndDisplaySurvey(
                                     context,
