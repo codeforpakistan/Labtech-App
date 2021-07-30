@@ -28,13 +28,13 @@ class _DepartmentListState extends State<DepartmentList> {
     return data;
   }
 
-  isHaveSubmission(submissions, indicatorName) {
-    var found = false;
+  getDepartmentSubmission(submissions, indicatorName) {
+    var found = [];
     if (submissions != null && submissions.length > 0) {
       submissions.forEach((each) => {
             if (each['indicator_name'] != null &&
                 each['indicator_name'] == indicatorName)
-              {found = true}
+              {found.add(each)}
           });
     }
     return found;
@@ -105,8 +105,10 @@ class _DepartmentListState extends State<DepartmentList> {
                       ),
                       child: ListTile(
                         leading: isFromProgressView
-                            ? Icon(isHaveSubmission(submissions,
-                                    snapshot.data[index - 1]["name"])
+                            ? Icon((getDepartmentSubmission(submissions,
+                                            snapshot.data[index - 1]["name"])
+                                        .length >
+                                    0)
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
@@ -123,7 +125,8 @@ class _DepartmentListState extends State<DepartmentList> {
                               hospitalName,
                               snapshot.data[index - 1]["name"],
                               snapshot.data[index - 1]['module_name'],
-                              submissions,
+                              getDepartmentSubmission(submissions,
+                                  snapshot.data[index - 1]["name"]),
                               isFromProgressView,
                               isFromSubmittedView,
                               submissionNo);
@@ -164,6 +167,7 @@ class _DepartmentListState extends State<DepartmentList> {
         "submission_no": isFromProgressView ? submissionNo : 0,
         "dept_name": deptName,
         "module_name": moduleName,
+        'submissions': submissions
       });
     } else if (isFromSubmittedView) {
       Navigator.pushNamed(context, "/submitted-survey-list", arguments: {
