@@ -38,6 +38,7 @@ class _MySurveyState extends State<SurveyView> {
   int submissionNo;
   dynamic payload;
   List<dynamic> questions = [];
+  List<dynamic> submissions = [];
   bool processing = false;
   String surveyKey;
   List<File> imageFiles = [];
@@ -202,6 +203,7 @@ class _MySurveyState extends State<SurveyView> {
       hospitalName = dataFromDepartmentScreen['hospital_name'];
       submissionNo = dataFromDepartmentScreen['submission_no'];
       moduleName = dataFromDepartmentScreen['module_name'];
+      submissions = dataFromDepartmentScreen['submissions'];
       surveyKey = hospitalId.toString() + departmentId.toString();
     });
     var data =
@@ -370,15 +372,30 @@ class _MySurveyState extends State<SurveyView> {
 
   String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
+  getDefaultSelection(question) {
+    var selectedOption;
+    if (this.submissions != null && this.submissions.length > 0) {
+      this.submissions[0]['answers'].forEach((answer) => {
+            if (answer['question'] == question)
+              {selectedOption = answer['answer']}
+          });
+    }
+    return selectedOption;
+  }
+
   getSampleTask() {
     List<Step> steps = [];
     List<TextChoice> choices = [];
-    steps.add(InstructionStep(
-      id: StepIdentifier(id: 'null'),
-      title: 'Welcome to Lab Survey',
-      text: 'Get ready!',
-      buttonText: 'Let\'s go!',
-    ));
+    final isAlreadySubmitted =
+        this.submissions != null && this.submissions.length > 0;
+    if (!isAlreadySubmitted) {
+      steps.add(InstructionStep(
+        id: StepIdentifier(id: 'null'),
+        title: 'Welcome to Lab Survey',
+        text: 'Get ready!',
+        buttonText: 'Let\'s go!',
+      ));
+    }
     var total = this.questions.length;
     this.questions.asMap().forEach((index, each) => {
           choices = [],
@@ -393,7 +410,10 @@ class _MySurveyState extends State<SurveyView> {
               title: 'Question ' + index.toString() + '/' + total.toString(),
               text: each['question'],
               answerFormat: SingleChoiceAnswerFormat(
-                  defaultSelection: null, textChoices: choices)))
+                  defaultSelection: TextChoice(
+                      text: capitalize(getDefaultSelection(each['question'])),
+                      value: getDefaultSelection(each['question'])),
+                  textChoices: choices)))
         });
     steps.add(QuestionStep(
       id: StepIdentifier(id: (this.questions.length + 1).toString()),
