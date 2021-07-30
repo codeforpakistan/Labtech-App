@@ -83,23 +83,6 @@ class _HospitalListState extends State<HospitalList> {
                         ),
                       ),
                     ),
-                    // (snapshot.data[0]['start_date'] != null
-                    //     ? "\n" +
-                    //         new DateFormat.yMMMMEEEEd().format(
-                    //             DateTime.parse(snapshot.data[index]
-                    //                 ['start_date']))
-                    //     : '') +
-                    // (widget.isFromSubmittedView &&
-                    //         snapshot.data[0]['end_date'] != null
-                    //     ? "\n" +
-                    //         new DateFormat.yMMMMEEEEd().format(
-                    //             DateTime.parse(snapshot.data[index]
-                    //                 ['end_date']))
-                    // : ''
-                    // ),
-
-                    //  "Start Date: ${snapshot.data[0]['start_date'] != null ?  "\n"  + new DateFormat.yMMMMEEEEd().format(
-                    //     DateTime.parse(snapshot.data[index]['start_date'])) : 'N/A'}" +
                     child: ((widget.isFromSubmittedView &&
                                 snapshot.data[index]['completed'] == true) ||
                             (widget.isFromProgressView) &&
