@@ -370,7 +370,8 @@ class _MySurveyState extends State<SurveyView> {
         });
   }
 
-  String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+  String capitalize(String s) =>
+      s != null && s[0] != null ? s[0].toUpperCase() + s.substring(1) : '';
 
   getDefaultSelection(question) {
     var selectedOption;
@@ -399,11 +400,13 @@ class _MySurveyState extends State<SurveyView> {
     var total = this.questions.length;
     this.questions.asMap().forEach((index, each) => {
           choices = [],
-          each['options'].forEach((eachOption) {
-            choices.add(TextChoice(
-                text: capitalize(eachOption['text']),
-                value: eachOption['text']));
-          }),
+          each['options'] != null
+              ? each['options'].forEach((eachOption) {
+                  choices.add(TextChoice(
+                      text: capitalize(eachOption['text']),
+                      value: eachOption['text']));
+                })
+              : null,
           steps.add(QuestionStep(
               isOptional: false,
               id: StepIdentifier(id: index.toString()),

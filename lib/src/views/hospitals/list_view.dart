@@ -85,8 +85,10 @@ class _HospitalListState extends State<HospitalList> {
                     ),
                     child: ((widget.isFromSubmittedView &&
                                 snapshot.data[index]['completed'] == true) ||
-                            (widget.isFromProgressView) &&
-                                snapshot.data[index]['completed'] == false)
+                            (widget.isFromProgressView &&
+                                snapshot.data[index]['completed'] == false) ||
+                            !widget.isFromSubmittedView &&
+                                !widget.isFromProgressView)
                         ? Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: ListTile(
