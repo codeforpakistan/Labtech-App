@@ -5,6 +5,7 @@ import 'package:survey_kit/survey_kit.dart'
     show
         SurveyKit,
         SurveyResult,
+        SurveyController,
         TaskIdentifier,
         StepIdentifier,
         OrderedTask,
@@ -36,10 +37,12 @@ class _MySurveyState extends State<SurveyView> {
   int hospitalId;
   int departmentId;
   int submissionNo;
+  int submissionID;
   dynamic payload;
   List<dynamic> questions = [];
   List<dynamic> submissions = [];
   bool processing = false;
+  bool isAlreadySubmitted = false;
   String surveyKey;
   List<File> imageFiles = [];
 
@@ -206,6 +209,7 @@ class _MySurveyState extends State<SurveyView> {
       submissions = dataFromDepartmentScreen['submissions'];
       surveyKey = hospitalId.toString() + departmentId.toString();
     });
+    this.submissionID = this.submissions != null && this.submissions.length > 0 ? this.submissions[0]['submission_id'] : -1;
     var data =
         await getSurveyQuestionnaire(this.hospitalId, this.departmentId, true);
     this.setDefaultAnswers(data.first);
@@ -293,12 +297,24 @@ class _MySurveyState extends State<SurveyView> {
         var accessToken = Constants.prefs.getString('access_token');
         var url = Constants.BASE_URL + 'submissions/';
         var data = json.encode(this.payload);
-        var response = await http.post(url,
+        var response;
+        if (this.isAlreadySubmitted && this.submissionID != -1) {
+          url = url + this.submissionID.toString();
+          response = await http.put(url,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: data);
+         
+        } else {
+          response = await http.post(url,
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $accessToken',
             },
             body: data);
+        }
         if (response.statusCode == 200) {
           Toast.show("Survey submitted!", this.context,
               duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -388,6 +404,7 @@ class _MySurveyState extends State<SurveyView> {
     List<TextChoice> choices = [];
     final isAlreadySubmitted =
         this.submissions != null && this.submissions.length > 0;
+    this.isAlreadySubmitted = isAlreadySubmitted;
     if (!isAlreadySubmitted) {
       steps.add(InstructionStep(
         id: StepIdentifier(id: 'null'),
@@ -410,10 +427,10 @@ class _MySurveyState extends State<SurveyView> {
               title: 'Question ' + index.toString() + '/' + total.toString(),
               text: each['question'],
               answerFormat: SingleChoiceAnswerFormat(
-                  defaultSelection: TextChoice(
+                  defaultSelection: isAlreadySubmitted ? TextChoice(
                       text: capitalize(getDefaultSelection(each['question'])),
-                      value: getDefaultSelection(each['question'])),
-                  textChoices: choices)))
+                      value: getDefaultSelection(each['question'])) : null,
+                  textChoices: choices))),
         });
     steps.add(QuestionStep(
       id: StepIdentifier(id: (this.questions.length + 1).toString()),
