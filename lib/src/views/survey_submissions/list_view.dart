@@ -25,29 +25,6 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
       var submissions = dataFromParams['submissions'];
       var data = [];
       data = getSubmissionForCurrentIndicator(submissions, indicatorName);
-      // var url = Constants.BASE_URL + "submissions/?skip=0&limit=100";
-      // var accessToken = Constants.prefs.getString('access_token');
-      // var response = await http.get(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Accept': 'application/json',
-      //     'Authorization': 'Bearer $accessToken',
-      //   },
-      // );
-      // data = json.decode(utf8.decode(response.bodyBytes));
-      // var updatedList = [];
-      // var name = '';
-      // data.forEach((each) => {name = each?.hospital, print(name)});
-      // // data.forEach((each: any) {
-      // //   print(each);
-      // //   // if (value &&
-      // //   //     value.hospital &&
-      // //   //     value.hospital.toString() == hospitalName.toString()) {
-      // //   //   updatedList.add(value);
-      // //   // }
-      // // });
-      print(data);
       return data;
     } catch (error) {
       print(error);
@@ -61,13 +38,6 @@ class _SubmittedSurveyListState extends State<SubmittedSurveyList> {
     super.initState();
     // _getCurrentLocation();
   }
-
-  // void _getCurrentLocation() async {
-  //   final position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   Constants.prefs.setDouble('latitude', position.latitude);
-  //   Constants.prefs.setDouble('longitude', position.longitude);
-  // }
 
   getSubmissionForCurrentIndicator(submissions, currentIndicator) {
     var found = [];

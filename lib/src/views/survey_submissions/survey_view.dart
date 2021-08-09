@@ -1,21 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart' hide Step;
-import 'package:survey_kit/survey_kit.dart'
-    show
-        SurveyKit,
-        SurveyResult,
-        SurveyController,
-        TaskIdentifier,
-        StepIdentifier,
-        OrderedTask,
-        SingleChoiceAnswerFormat,
-        CompletionStep,
-        QuestionStep,
-        Step,
-        InstructionStep,
-        TextChoice,
-        TextAnswerFormat;
+import 'package:survey_kit/survey_kit.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
@@ -209,7 +195,9 @@ class _MySurveyState extends State<SurveyView> {
       submissions = dataFromDepartmentScreen['submissions'];
       surveyKey = hospitalId.toString() + departmentId.toString();
     });
-    this.submissionID = this.submissions != null && this.submissions.length > 0 ? this.submissions[0]['submission_id'] : -1;
+    this.submissionID = this.submissions != null && this.submissions.length > 0
+        ? this.submissions[0]['submission_id']
+        : -1;
     var data =
         await getSurveyQuestionnaire(this.hospitalId, this.departmentId, true);
     this.setDefaultAnswers(data.first);
@@ -306,14 +294,13 @@ class _MySurveyState extends State<SurveyView> {
                 'Authorization': 'Bearer $accessToken',
               },
               body: data);
-         
         } else {
           response = await http.post(url,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $accessToken',
-            },
-            body: data);
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: data);
         }
         if (response.statusCode == 200) {
           Toast.show("Survey submitted!", this.context,
@@ -408,7 +395,7 @@ class _MySurveyState extends State<SurveyView> {
     this.isAlreadySubmitted = isAlreadySubmitted;
     if (!isAlreadySubmitted) {
       steps.add(InstructionStep(
-        id: StepIdentifier(id: 'null'),
+        stepIdentifier: StepIdentifier(id: 'null'),
         title: 'Welcome to Lab Survey',
         text: 'Get ready!',
         buttonText: 'Let\'s go!',
@@ -426,17 +413,28 @@ class _MySurveyState extends State<SurveyView> {
               : null,
           steps.add(QuestionStep(
               isOptional: false,
-              id: StepIdentifier(id: index.toString()),
+              stepIdentifier: StepIdentifier(id: index.toString()),
               title: 'Question ' + index.toString() + '/' + total.toString(),
               text: each['question'],
-              answerFormat: SingleChoiceAnswerFormat(
-                  defaultSelection: isAlreadySubmitted ? TextChoice(
-                      text: capitalize(getDefaultSelection(each['question'])),
-                      value: getDefaultSelection(each['question'])) : null,
-                  textChoices: choices))),
+              answerFormat: choices.length > 0
+                  ? SingleChoiceAnswerFormat(
+                      defaultSelection: isAlreadySubmitted
+                          ? TextChoice(
+                              text: capitalize(
+                                  getDefaultSelection(each['question'])),
+                              value: getDefaultSelection(each['question']))
+                          : null,
+                      textChoices: choices)
+                  : TextAnswerFormat(
+                      maxLines: 10,
+                      hint: isAlreadySubmitted
+                          ? getDefaultSelection(each['question'])
+                          : null)))
         });
     steps.add(QuestionStep(
-      id: StepIdentifier(id: (this.questions.length + 1).toString()),
+      isOptional: true,
+      stepIdentifier:
+          StepIdentifier(id: (this.questions.length + 1).toString()),
       title: 'Comments',
       text: 'Please Enter you remarks',
       answerFormat: TextAnswerFormat(
@@ -444,14 +442,12 @@ class _MySurveyState extends State<SurveyView> {
       ),
     ));
     steps.add(CompletionStep(
-      id: StepIdentifier(id: 'null'),
+      stepIdentifier: StepIdentifier(id: 'null'),
       text: 'Thanks for taking the survey, we will contact you soon!',
       title: 'Done!',
       buttonText: 'Submit survey',
     ));
     var task = OrderedTask(id: TaskIdentifier(), steps: steps);
-    // task.addNavigationRule(
-    //     forTriggerStepIdentifier: steps[0].id, navigationRule: null);
     return task;
   }
 
