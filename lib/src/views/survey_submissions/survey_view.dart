@@ -375,16 +375,28 @@ class _MySurveyState extends State<SurveyView> {
         });
   }
 
-  String capitalize(String s) =>
-      s != null && s[0] != null ? s[0].toUpperCase() + s.substring(1) : '';
+  String capitalize(String s) {
+    try {
+      return s != '' && s != null && s[0] != null
+          ? s[0].toUpperCase() + s.substring(1)
+          : '';
+    } catch (e) {
+      print('capitalize' + e.toString());
+      return s;
+    }
+  }
 
   getDefaultSelection(question) {
     var selectedOption;
-    if (this.submissions != null && this.submissions.length > 0) {
-      this.submissions[0]['answers'].forEach((answer) => {
-            if (answer['question'] == question)
-              {selectedOption = answer['answer']}
-          });
+    try {
+      if (this.submissions != null && this.submissions.length > 0) {
+        this.submissions[0]['answers'].forEach((answer) => {
+              if (answer['question'] == question)
+                {selectedOption = answer['answer']}
+            });
+      }
+    } catch (e) {
+      print('getDefaultSelection' + e.toString());
     }
     return selectedOption;
   }
