@@ -66,6 +66,7 @@ class _MySurveyState extends State<SurveyView> {
                         var isCancelled = (result.finishReason.toString() ==
                             'FinishReason.DISCARDED');
                         if (isCancelled) {
+                          Navigator.pop(context);
                           Navigator.of(context).pushNamedAndRemoveUntil(
                               '/home', (Route<dynamic> route) => false);
                           return;
@@ -266,7 +267,7 @@ class _MySurveyState extends State<SurveyView> {
     try {
       result.results.asMap().forEach((key, value) {
         var id = value?.results[0]?.id?.id;
-        if (id != 'null') {
+        if (id != 'null' && id != '321') {
           if (int.parse(id) > this.payload['answers'].length) {
             this.payload['answers'].add({
               'answer': value?.results[0]?.valueIdentifier,
@@ -307,7 +308,8 @@ class _MySurveyState extends State<SurveyView> {
               duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
           // var jsonData = json.decode(response.body);
           setState(() {
-            Navigator.pushReplacementNamed(this.context, '/home');
+            Navigator.of(this.context).pushReplacementNamed('/home');
+            // Navigator.pushReplacementNamed(this.context, '/home');
           });
         } else {
           this.processing = false;
@@ -327,7 +329,7 @@ class _MySurveyState extends State<SurveyView> {
         var hiveResp = await _addSurveyInHive(this.payload, this.surveyKey);
         if (hiveResp) {
           setState(() {
-            Navigator.pushReplacementNamed(this.context, '/home');
+            Navigator.of(this.context).pushReplacementNamed('/home');
           });
         } else {
           Toast.show("Server Error. Please contact support", this.context,
@@ -412,7 +414,7 @@ class _MySurveyState extends State<SurveyView> {
                 })
               : null,
           steps.add(QuestionStep(
-              isOptional: false,
+              isOptional: choices.length > 0 ? false : true,
               stepIdentifier: StepIdentifier(id: index.toString()),
               title: 'Question ' + index.toString() + '/' + total.toString(),
               text: each['question'],
@@ -442,7 +444,7 @@ class _MySurveyState extends State<SurveyView> {
       ),
     ));
     steps.add(CompletionStep(
-      stepIdentifier: StepIdentifier(id: 'null'),
+      stepIdentifier: StepIdentifier(id: '321'),
       text: 'Thanks for taking the survey, we will contact you soon!',
       title: 'Done!',
       buttonText: 'Submit survey',
