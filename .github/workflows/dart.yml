@@ -51,4 +51,4 @@ jobs:
     # Download apk only
     - uses: actions/download-artifact@v2
       with:
-       path: build/app/outputs/flutter-apk/app-debug.apk
+       path: build/app/outputs/flutter-apk/
