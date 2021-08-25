@@ -416,7 +416,8 @@ class _MySurveyState extends State<SurveyView> {
           steps.add(QuestionStep(
               isOptional: choices.length > 0 ? false : true,
               stepIdentifier: StepIdentifier(id: index.toString()),
-              title: 'Question ' + index.toString() + '/' + total.toString(),
+              title:
+                  'Question ' + (index + 1).toString() + '/' + total.toString(),
               text: each['question'],
               answerFormat: choices.length > 0
                   ? SingleChoiceAnswerFormat(
