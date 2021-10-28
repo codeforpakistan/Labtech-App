@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
-import 'package:hospection/src/views/departments/list_view.dart';
-import 'package:hospection/src/views/hospitals/list_view.dart';
+import 'package:hospection/src/views/indicators/indicator_view.dart';
+import 'package:hospection/src/views/lab/hospital_view.dart';
 import 'package:hospection/src/views/survey_submissions/survey_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
-import 'package:hospection/src/views/survey_submissions/list_view.dart';
+// import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
 import 'package:hospection/src/views/splash_screen.dart';
 import 'package:hive/hive.dart';
@@ -95,7 +95,7 @@ class HosepctionState extends State<Hosepction> {
       routes: {
         '/login': (context) => Login(),
         '/home': (context) => TabView(),
-        '/submitted-survey-list': (context) => SubmittedSurveyList(),
+        // '/submitted-survey-list': (context) => SubmittedSurveyList(),
         '/show-survey-details': (context) => ShowSurveyDetails(),
         '/hospital-list': (context) => HospitalList(),
         '/department-list': (context) => DepartmentList(),
