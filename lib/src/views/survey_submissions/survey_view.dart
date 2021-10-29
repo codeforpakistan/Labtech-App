@@ -84,11 +84,10 @@ class _MySurveyState extends State<SurveyView> {
                         primaryColor: Colors.cyan,
                         backgroundColor: Colors.white,
                         appBarTheme: const AppBarTheme(
-                          color: Colors.white,
-                          iconTheme: IconThemeData(
-                            color: Colors.cyan,
-                          )
-                        ),
+                            color: Colors.white,
+                            iconTheme: IconThemeData(
+                              color: Colors.cyan,
+                            )),
                         iconTheme: const IconThemeData(
                           color: Colors.cyan,
                         ),
