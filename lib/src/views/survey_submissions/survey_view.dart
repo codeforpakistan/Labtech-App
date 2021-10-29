@@ -88,7 +88,7 @@ class _MySurveyState extends State<SurveyView> {
                           iconTheme: IconThemeData(
                             color: Colors.cyan,
                           ),
-                          textTheme: TextTheme(
+                          titleTextStyle: TextTheme(
                             button: TextStyle(
                               color: Colors.cyan,
                             ),
