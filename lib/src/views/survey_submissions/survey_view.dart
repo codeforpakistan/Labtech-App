@@ -87,12 +87,7 @@ class _MySurveyState extends State<SurveyView> {
                           color: Colors.white,
                           iconTheme: IconThemeData(
                             color: Colors.cyan,
-                          ),
-                          titleTextStyle: TextTheme(
-                            button: TextStyle(
-                              color: Colors.cyan,
-                            ),
-                          ),
+                          )
                         ),
                         iconTheme: const IconThemeData(
                           color: Colors.cyan,
