@@ -71,7 +71,7 @@ class _MySurveyState extends State<SurveyView> {
                               '/home', (Route<dynamic> route) => false);
                           return;
                         }
-                        // check
+                        // submit
                         submitSurvey(result);
                       },
                       task: getSampleTask(),
