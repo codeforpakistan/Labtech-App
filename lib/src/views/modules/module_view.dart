@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:hospection/src/utils/constants.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class DepartmentList extends StatefulWidget {
+class ModuleList extends StatefulWidget {
   @override
-  _DepartmentListState createState() => _DepartmentListState();
+  _ModuleListState createState() => _ModuleListState();
 }
 
-class _DepartmentListState extends State<DepartmentList> {
+class _ModuleListState extends State<ModuleList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var orignalData = [];
 
-  Future getDepartmentData(indicators) async {
-    return indicators;
+  Future getDepartmentData(hospitalId) async {
+    var data = [];
+    var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
+    var accessToken = Constants.prefs.getString('access_token');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    data = json.decode(utf8.decode(response.bodyBytes));
+    orignalData = data;
+    var allUniqueModules = [];
+    data.forEach((newItem) {
+      if (allUniqueModules.indexWhere(
+              (element) => element['module_name'] == newItem['module_name']) ==
+          -1) {
+        allUniqueModules.add(newItem);
+      }
+    });
+    return allUniqueModules;
   }
 
-  getDepartmentSubmission(submissions, indicatorName) {
+  getDepartmentSubmission(submissions, indicatorName, moduleName, returnData) {
     var found = [];
     if (submissions != null && submissions.length > 0) {
       submissions.forEach((each) => {
@@ -21,15 +46,29 @@ class _DepartmentListState extends State<DepartmentList> {
               {found.add(each)}
           });
     }
-    return found;
+    if (returnData) {
+      return found;
+    } else {
+      var toReturn = orignalData
+          .where((element) => element['module_name'] == moduleName)
+          .toList();
+      return found.length == toReturn.length;
+    }
+  }
+
+  getModuleIndicators(moduleName) {
+    var toReturn = orignalData
+        .where((element) => element['module_name'] == moduleName)
+        .toList();
+    return toReturn;
   }
 
   @override
   Widget build(BuildContext context) {
     final Map dataFromHospitalScreen =
         ModalRoute.of(context).settings.arguments;
+    var hospitalId = dataFromHospitalScreen['hospital_id'];
     var hospitalName = dataFromHospitalScreen['hospital_name'];
-    var moduleName = dataFromHospitalScreen['module_name'];
     final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
     final isFromSubmittedView = dataFromHospitalScreen['isFromSubmittedView'];
     final submissions = dataFromHospitalScreen['submissions'];
@@ -45,12 +84,12 @@ class _DepartmentListState extends State<DepartmentList> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          "Indicators List",
+          "Modules List",
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: FutureBuilder(
-        future: getDepartmentData(dataFromHospitalScreen['indicators']),
+        future: getDepartmentData(hospitalId),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -72,7 +111,7 @@ class _DepartmentListState extends State<DepartmentList> {
                             child: Row(children: [
                           Flexible(
                               child: Center(
-                                  child: Text("Module: " + moduleName,
+                                  child: Text("Lab: " + hospitalName,
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold)))),
@@ -89,14 +128,15 @@ class _DepartmentListState extends State<DepartmentList> {
                       ),
                       child: ListTile(
                         leading: isFromProgressView
-                            ? Icon((getDepartmentSubmission(submissions,
-                                            snapshot.data[index - 1]["name"])
-                                        .length >
-                                    0)
+                            ? Icon((getDepartmentSubmission(
+                                    submissions,
+                                    snapshot.data[index - 1]["name"],
+                                    snapshot.data[index - 1]['module_name'],
+                                    false))
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
-                        title: Text(snapshot.data[index - 1]['name']),
+                        title: Text(snapshot.data[index - 1]['module_name']),
                         onTap: () {
                           _navigateToNextView(
                               context,
@@ -105,8 +145,11 @@ class _DepartmentListState extends State<DepartmentList> {
                               hospitalName,
                               snapshot.data[index - 1]["name"],
                               snapshot.data[index - 1]['module_name'],
-                              getDepartmentSubmission(submissions,
-                                  snapshot.data[index - 1]["name"]),
+                              getDepartmentSubmission(
+                                  submissions,
+                                  snapshot.data[index - 1]["name"],
+                                  snapshot.data[index - 1]['module_name'],
+                                  true),
                               isFromProgressView,
                               isFromSubmittedView,
                               submissionNo);
@@ -139,26 +182,17 @@ class _DepartmentListState extends State<DepartmentList> {
       isFromProgressView,
       isFromSubmittedView,
       submissionNo) async {
-    if (!isFromSubmittedView) {
-      Navigator.pushNamed(context, "/submit-survey", arguments: {
-        "hospital_id": hospitalId,
-        "department_id": departmentId,
-        "hospital_name": hospitalName,
-        "submission_no": isFromProgressView ? submissionNo : 0,
-        "dept_name": deptName,
-        "module_name": moduleName,
-        'submissions': submissions
-      });
-    } else if (isFromSubmittedView) {
-      Navigator.pushNamed(context, "/submitted-survey-list", arguments: {
-        'hospitalName': hospitalName,
-        'hospitalId': hospitalId,
-        'departmentId': departmentId,
-        'submissions': submissions,
-        "hospital_name": hospitalName,
-        "indicator_name": deptName,
-        "module_name": moduleName,
-      });
-    }
+    Navigator.pushNamed(context, "/indicator-list", arguments: {
+      "hospital_id": hospitalId,
+      "department_id": departmentId,
+      "hospital_name": hospitalName,
+      "submission_no": isFromProgressView ? submissionNo : 0,
+      "dept_name": deptName,
+      "module_name": moduleName,
+      "isFromProgressView": isFromProgressView,
+      "isFromSubmittedView": isFromSubmittedView,
+      "indicators": getModuleIndicators(moduleName),
+      'submissions': submissions
+    });
   }
 }

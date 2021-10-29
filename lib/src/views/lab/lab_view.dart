@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
 class HospitalList extends StatefulWidget {
@@ -132,7 +131,7 @@ class _HospitalListState extends State<HospitalList> {
 
   _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName,
       submissions, isFromProgressView, isFromSubmittedView) async {
-    Navigator.pushNamed(context, "/department-list", arguments: {
+    Navigator.pushNamed(context, "/module-list", arguments: {
       "submissions": submissions,
       "hospital_id": hospitalId,
       "hospital_name": hospitalName,
