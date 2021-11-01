@@ -37,23 +37,35 @@ class _ModuleListState extends State<ModuleList> {
     return allUniqueModules;
   }
 
-  getDepartmentSubmission(submissions, indicatorName, moduleName, returnData) {
+  // find submissions against allModules with specific submission no.
+  getDepartmentSubmission(
+      submissions, indicatorName, moduleName, submissionNo, returnData) {
     var found = [];
     if (submissions != null && submissions.length > 0) {
-      submissions.forEach((each) => {
-            if (each['indicator_name'] != null &&
-                each['indicator_name'] == indicatorName)
+      // filter out submission by submissionNO first
+      var recordsOfRequestedSubmitions = submissions
+          .where((element) => element['submission_no'] == submissionNo)
+          .toList();
+      // filter out submission by moduleName
+      recordsOfRequestedSubmitions.forEach((each) => {
+            if (each['module_name'] != null &&
+                each['module_name'] == moduleName)
               {found.add(each)}
           });
     }
-    if (returnData) {
-      return found;
-    } else {
-      var toReturn = orignalData
-          .where((element) => element['module_name'] == moduleName)
-          .toList();
-      return found.length == toReturn.length;
-    }
+    // filter out labs and modules from api by moduleName
+    var allIndictorsOfSelectedModule = orignalData
+        .where((element) =>
+            element['module_name'] != null &&
+            element['module_name'] == moduleName)
+        .toList();
+    // ensure allIndictorsOfSelectedModule has atleast one submission against submissionNO
+    bool isAllSubmissionsExists = allIndictorsOfSelectedModule.every((element) {
+      return (found
+              .indexWhere((each) => each['indicator_name'] == element['name']) >
+          -1);
+    });
+    return returnData ? found : isAllSubmissionsExists;
   }
 
   getModuleIndicators(moduleName) {
@@ -132,6 +144,7 @@ class _ModuleListState extends State<ModuleList> {
                                     submissions,
                                     snapshot.data[index - 1]["name"],
                                     snapshot.data[index - 1]['module_name'],
+                                    submissionNo,
                                     false))
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
@@ -149,6 +162,7 @@ class _ModuleListState extends State<ModuleList> {
                                   submissions,
                                   snapshot.data[index - 1]["name"],
                                   snapshot.data[index - 1]['module_name'],
+                                  submissionNo,
                                   true),
                               isFromProgressView,
                               isFromSubmittedView,

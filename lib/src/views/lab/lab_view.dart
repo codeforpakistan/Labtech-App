@@ -17,12 +17,6 @@ class HospitalList extends StatefulWidget {
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Future getHospitalData(shouldFetchLabSubmission) async {
-    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (isLocationServiceEnabled) {
-    //   print(isLocationServiceEnabled);
-    // } else {
-    //   await Geolocator.requestPermission();
-    // }
     var url = shouldFetchLabSubmission == true
         ? Constants.BASE_URL + "submissions/by-labs"
         : Constants.BASE_URL + "hospitals/";
@@ -44,13 +38,6 @@ class _HospitalListState extends State<HospitalList> {
     super.initState();
     // _getCurrentLocation();
   }
-
-  // void _getCurrentLocation() async {
-  //   final position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   Constants.prefs.setDouble('latitude', position.latitude);
-  //   Constants.prefs.setDouble('longitude', position.longitude);
-  // }
 
   @override
   Widget build(BuildContext context) {
