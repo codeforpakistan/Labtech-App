@@ -11,7 +11,22 @@ class ModuleList extends StatefulWidget {
 class _ModuleListState extends State<ModuleList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var orignalData = [];
-
+  var sequence = [
+    'Facility',
+    'Laboratory Information System',
+    'Data Management',
+    'Quality Assurance',
+    'Media Quality Control',
+    'Identification Quality Control',
+    'Antibiotic Susceptibility Testing Quality Control',
+    'Specimen',
+    'Processing',
+    'Identification',
+    'Basic Antibiotic Susceptibility Testing',
+    'Antibiotic Susceptibility Testing Expert rules',
+    'Antibiotic Susceptibility Testing Policy',
+    'Safety'
+  ];
   Future getDepartmentData(hospitalId) async {
     var data = [];
     var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
@@ -26,14 +41,27 @@ class _ModuleListState extends State<ModuleList> {
     );
     data = json.decode(utf8.decode(response.bodyBytes));
     orignalData = data;
-    var allUniqueModules = [];
+    var uniqueModulesWithoutSequence = [];
     data.forEach((newItem) {
-      if (allUniqueModules.indexWhere(
+      if (uniqueModulesWithoutSequence.indexWhere(
               (element) => element['module_name'] == newItem['module_name']) ==
           -1) {
-        allUniqueModules.add(newItem);
+        uniqueModulesWithoutSequence.add(newItem);
       }
     });
+    var allUniqueModules = uniqueModulesWithoutSequence;
+    data.forEach((element) {
+      var idx = sequence.indexWhere(
+          (each) => element != null && each == element['module_name']);
+      if (idx > -1 &&
+          allUniqueModules
+                  .indexWhere((element) => element['module_name'] == element) ==
+              -1) {
+        allUniqueModules[idx] = element;
+      }
+    });
+    print('unique');
+    print(allUniqueModules);
     return allUniqueModules;
   }
 
