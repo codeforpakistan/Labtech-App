@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
 import 'package:hospection/src/views/indicators/indicator_view.dart';
-import 'package:hospection/src/views/lab/hospital_view.dart';
+import 'package:hospection/src/views/lab/lab_view.dart';
+import 'package:hospection/src/views/modules/module_view.dart';
 import 'package:hospection/src/views/survey_submissions/survey_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
-// import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/views/tabs/tab_view.dart';
 import 'package:hospection/src/views/splash_screen.dart';
 import 'package:hive/hive.dart';
@@ -98,7 +98,8 @@ class HosepctionState extends State<Hosepction> {
         // '/submitted-survey-list': (context) => SubmittedSurveyList(),
         '/show-survey-details': (context) => ShowSurveyDetails(),
         '/hospital-list': (context) => HospitalList(),
-        '/department-list': (context) => DepartmentList(),
+        '/module-list': (context) => ModuleList(),
+        '/indicator-list': (context) => DepartmentList(),
         '/submit-survey': (context) => SurveyView(),
       },
       debugShowCheckedModeBanner: false,

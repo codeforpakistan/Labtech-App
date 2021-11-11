@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hospection/src/views/auth/login_view.dart';
 import 'package:hospection/src/views/indicators/indicator_view.dart';
-import 'package:hospection/src/views/lab/hospital_view.dart';
-// import 'package:hospection/src/views/survey_submissions/create_view.dart';
+import 'package:hospection/src/views/lab/lab_view.dart';
+import 'package:hospection/src/views/modules/module_view.dart';
 import 'package:hospection/src/views/survey_submissions/survey_view.dart';
 import 'package:hospection/src/views/survey_submissions/details_view.dart';
-// import 'package:hospection/src/views/survey_submissions/list_view.dart';
 import 'package:hospection/src/utils/constants.dart';
 
 class TabView extends StatelessWidget {
@@ -114,7 +113,8 @@ class TabView extends StatelessWidget {
         '/show-survey-details': (context) => ShowSurveyDetails(),
         '/hospital-list': (context) =>
             HospitalList(isFromProgressView: false, isFromSubmittedView: false),
-        '/department-list': (context) => DepartmentList(),
+        '/indicator-list': (context) => DepartmentList(),
+        '/module-list': (context) => ModuleList(),
         '/submit-survey': (context) => SurveyView(),
       },
     );

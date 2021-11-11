@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hospection/src/utils/constants.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class DepartmentList extends StatefulWidget {
   @override
@@ -11,21 +8,8 @@ class DepartmentList extends StatefulWidget {
 class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future getDepartmentData(hospitalId) async {
-    var data = [];
-    print(hospitalId);
-    var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
-    var accessToken = Constants.prefs.getString('access_token');
-    var response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
-    data = json.decode(utf8.decode(response.bodyBytes));
-    return data;
+  Future getDepartmentData(indicators) async {
+    return indicators;
   }
 
   getDepartmentSubmission(submissions, indicatorName) {
@@ -44,8 +28,8 @@ class _DepartmentListState extends State<DepartmentList> {
   Widget build(BuildContext context) {
     final Map dataFromHospitalScreen =
         ModalRoute.of(context).settings.arguments;
-    var hospitalId = dataFromHospitalScreen['hospital_id'];
     var hospitalName = dataFromHospitalScreen['hospital_name'];
+    var moduleName = dataFromHospitalScreen['module_name'];
     final isFromProgressView = dataFromHospitalScreen['isFromProgressView'];
     final isFromSubmittedView = dataFromHospitalScreen['isFromSubmittedView'];
     final submissions = dataFromHospitalScreen['submissions'];
@@ -66,7 +50,7 @@ class _DepartmentListState extends State<DepartmentList> {
         ),
       ),
       body: FutureBuilder(
-        future: getDepartmentData(hospitalId),
+        future: getDepartmentData(dataFromHospitalScreen['indicators']),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -88,7 +72,7 @@ class _DepartmentListState extends State<DepartmentList> {
                             child: Row(children: [
                           Flexible(
                               child: Center(
-                                  child: Text("Lab: " + hospitalName,
+                                  child: Text("Module: " + moduleName,
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold)))),
@@ -112,11 +96,7 @@ class _DepartmentListState extends State<DepartmentList> {
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
-                        title: Text(snapshot.data[index - 1]['name'] +
-                            ' ' +
-                            '(' +
-                            snapshot.data[index - 1]['module_name'] +
-                            ')'),
+                        title: Text(snapshot.data[index - 1]['name']),
                         onTap: () {
                           _navigateToNextView(
                               context,
