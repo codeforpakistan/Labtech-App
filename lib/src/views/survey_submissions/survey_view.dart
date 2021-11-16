@@ -226,8 +226,6 @@ class _MySurveyState extends State<SurveyView> {
         Hive.registerAdapter(SurveyModelAdapter());
       }
       var box = await Hive.openBox<SurveyModel>(Constants.HIVE_SURVEYS_BOX);
-      print('box.keys');
-      print(box.keys);
       box.keys.forEach((k) {
         SurveyModel survey = box.get(k);
         printWrapped(json.encode(survey.payload));

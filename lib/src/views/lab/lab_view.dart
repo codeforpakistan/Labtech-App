@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hospection/src/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
 class HospitalList extends StatefulWidget {
@@ -18,12 +17,6 @@ class HospitalList extends StatefulWidget {
 class _HospitalListState extends State<HospitalList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Future getHospitalData(shouldFetchLabSubmission) async {
-    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (isLocationServiceEnabled) {
-    //   print(isLocationServiceEnabled);
-    // } else {
-    //   await Geolocator.requestPermission();
-    // }
     var url = shouldFetchLabSubmission == true
         ? Constants.BASE_URL + "submissions/by-labs"
         : Constants.BASE_URL + "hospitals/";
@@ -45,13 +38,6 @@ class _HospitalListState extends State<HospitalList> {
     super.initState();
     // _getCurrentLocation();
   }
-
-  // void _getCurrentLocation() async {
-  //   final position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   Constants.prefs.setDouble('latitude', position.latitude);
-  //   Constants.prefs.setDouble('longitude', position.longitude);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +118,7 @@ class _HospitalListState extends State<HospitalList> {
 
   _navigateAndDisplaySurvey(BuildContext context, hospitalId, hospitalName,
       submissions, isFromProgressView, isFromSubmittedView) async {
-    Navigator.pushNamed(context, "/department-list", arguments: {
+    Navigator.pushNamed(context, "/module-list", arguments: {
       "submissions": submissions,
       "hospital_id": hospitalId,
       "hospital_name": hospitalName,
