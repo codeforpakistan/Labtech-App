@@ -60,8 +60,6 @@ class _ModuleListState extends State<ModuleList> {
         allUniqueModules[idx] = element;
       }
     });
-    print('unique');
-    print(allUniqueModules);
     return allUniqueModules;
   }
 

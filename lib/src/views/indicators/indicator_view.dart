@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:hospection/src/utils/constants.dart';
 
 class DepartmentList extends StatefulWidget {
   @override
@@ -9,6 +12,22 @@ class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future getDepartmentData(indicators) async {
+    var url = Constants.BASE_URL + "departments/questions_length";
+    var accessToken = Constants.prefs.getString('access_token');
+    var response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    var data = json.decode(utf8.decode(response.bodyBytes));
+    indicators.forEach((eachIndicator) => {
+          if (eachIndicator['name'] != null &&
+              data[eachIndicator['name']] != null)
+            {eachIndicator['questionsLength'] = data[eachIndicator['name']]}
+        });
     return indicators;
   }
 
@@ -96,7 +115,17 @@ class _DepartmentListState extends State<DepartmentList> {
                                 ? Icons.check_box_rounded
                                 : Icons.check_box_outline_blank)
                             : null,
-                        title: Text(snapshot.data[index - 1]['name']),
+                        title: Text(snapshot.data[index - 1]['name'] +
+                            (snapshot.data[index - 1]['questionsLength'] !=
+                                        null &&
+                                    snapshot.data[index - 1]
+                                            ['questionsLength'] >
+                                        0
+                                ? ' (' +
+                                    snapshot.data[index - 1]['questionsLength']
+                                        .toString() +
+                                    ')'
+                                : '')),
                         onTap: () {
                           _navigateToNextView(
                               context,
