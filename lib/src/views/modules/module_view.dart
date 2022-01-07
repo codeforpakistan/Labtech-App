@@ -29,7 +29,8 @@ class _ModuleListState extends State<ModuleList> {
   ];
   Future getDepartmentData(hospitalId) async {
     var data = [];
-    var url = Constants.BASE_URL + "departments/?hospital_id=$hospitalId";
+    var url = Constants.BASE_URL +
+        "departments/?hospital_id=$hospitalId&skip=0&limit=1000";
     var accessToken = Constants.prefs.getString('access_token');
     var response = await http.get(
       url,
