@@ -204,9 +204,11 @@ class _LoginState extends State<Login> {
         await http.post(Constants.BASE_URL + "login/access-token", body: data);
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
+      print(jsonData);
       setState(() {
         Constants.prefs.setString('access_token', jsonData['access_token']);
         Constants.prefs.setBool("loggedIn", true);
+        Constants.prefs.setString("userRole", 'Admin');
         Navigator.pushReplacementNamed(context, '/home');
       });
     } else {

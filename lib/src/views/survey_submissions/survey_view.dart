@@ -297,10 +297,8 @@ class _MySurveyState extends State<SurveyView> {
         if (response.statusCode == 200) {
           Toast.show("Survey submitted!", this.context,
               duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-          // var jsonData = json.decode(response.body);
           setState(() {
             Navigator.of(this.context).pushReplacementNamed('/home');
-            // Navigator.pushReplacementNamed(this.context, '/home');
           });
         } else {
           this.processing = false;
@@ -386,9 +384,7 @@ class _MySurveyState extends State<SurveyView> {
                 {selectedOption = answer['answer']}
             });
       }
-    } catch (e) {
-      print('getDefaultSelection' + e.toString());
-    }
+    } catch (e) {}
     return selectedOption;
   }
 

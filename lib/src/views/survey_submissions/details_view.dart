@@ -33,7 +33,9 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
   Widget build(BuildContext context) {
     final Map<String, Object> dataFromHospitalScreen =
         ModalRoute.of(context).settings.arguments;
-    var surveyId = dataFromHospitalScreen['survey_id'];
+    List<dynamic> submissions = dataFromHospitalScreen['submissions'];
+    var surveyId =
+        submissions.length > 0 ? submissions[0]['submission_id'] : null;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -48,75 +50,85 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
               return Center(child: Text("Getting the survey details"));
-              break;
             case ConnectionState.done:
               if (snapshot.hasError) {
                 return Center(
                     child: Text(
                         "Some unknown error has occurred, please contact your system administrator"));
               }
-              final List<Widget> imageSliders = snapshot.data['images']
-                  .map<Widget>((item) => Container(
-                        margin: EdgeInsets.all(5.0),
-                        child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            child: Stack(
-                              children: <Widget>[
-                                InkResponse(
-                                    child: Image.network(
-                                        Constants.BASE_URL +
-                                            "utils/image/" +
-                                            item,
-                                        fit: BoxFit.cover,
-                                        width: 1000.0),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) {
-                                                return ImageView(
-                                                    tag: item,
-                                                    images: snapshot
-                                                        .data['images']);
-                                              },
-                                              settings: RouteSettings(
-                                                  name: 'ImageView')));
-                                    }),
-                                Positioned(
-                                  bottom: 0.0,
-                                  left: 0.0,
-                                  right: 0.0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color.fromARGB(200, 0, 0, 0),
-                                          Color.fromARGB(0, 0, 0, 0)
-                                        ],
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
+              if (!snapshot.hasData ||
+                  snapshot.data == null ||
+                  (snapshot.data != null && snapshot.data.length == 0)) {
+                return Center(child: Text("No Submission Found"));
+              }
+              print('here');
+              print(snapshot.data);
+              final List<Widget> imageSliders = snapshot.data.length > 0 &&
+                      snapshot.data['images'] != null
+                  ? snapshot.data['images']
+                      .map<Widget>((item) => Container(
+                            margin: EdgeInsets.all(5.0),
+                            child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                child: Stack(
+                                  children: <Widget>[
+                                    InkResponse(
+                                        child: Image.network(
+                                            Constants.BASE_URL +
+                                                "utils/image/" +
+                                                item,
+                                            fit: BoxFit.cover,
+                                            width: 1000.0),
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) {
+                                                    return ImageView(
+                                                        tag: item,
+                                                        images: snapshot
+                                                            .data['images']);
+                                                  },
+                                                  settings: RouteSettings(
+                                                      name: 'ImageView')));
+                                        }),
+                                    Positioned(
+                                      bottom: 0.0,
+                                      left: 0.0,
+                                      right: 0.0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Color.fromARGB(200, 0, 0, 0),
+                                              Color.fromARGB(0, 0, 0, 0)
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10.0, horizontal: 20.0),
+                                        child: Text(
+                                          '${snapshot.data['images'].indexOf(item) + 1}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                    child: Text(
-                                      '${snapshot.data['images'].indexOf(item) + 1}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ))
-                  .toList();
+                                  ],
+                                )),
+                          ))
+                      .toList()
+                  : [];
               return Column(
                 children: [
-                  snapshot.data['images'].length > 0
+                  snapshot.data['images'] != null &&
+                          snapshot.data['images'].length > 0
                       ? CarouselSlider(
                           options: CarouselOptions(
                             aspectRatio: 3.0,
