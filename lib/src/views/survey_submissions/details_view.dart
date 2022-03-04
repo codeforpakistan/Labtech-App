@@ -61,8 +61,6 @@ class _ShowSurveyDetailsState extends State<ShowSurveyDetails> {
                   (snapshot.data != null && snapshot.data.length == 0)) {
                 return Center(child: Text("No Submission Found"));
               }
-              print('here');
-              print(snapshot.data);
               final List<Widget> imageSliders = snapshot.data.length > 0 &&
                       snapshot.data['images'] != null
                   ? snapshot.data['images']
