@@ -10,6 +10,32 @@ class DepartmentList extends StatefulWidget {
 
 class _DepartmentListState extends State<DepartmentList> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isSupervisor = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      getUserRule();
+    });
+  }
+
+  Future getUserRule() async {
+    var url = Constants.BASE_URL + "users/me";
+    var accessToken = Constants.prefs.getString('access_token');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+    var data = json.decode(utf8.decode(response.bodyBytes));
+    setState(() {
+      isSupervisor = data['is_superuser'];
+    });
+  }
 
   Future getDepartmentData(indicators) async {
     var url = Constants.BASE_URL + "departments/questions_length";
@@ -168,7 +194,7 @@ class _DepartmentListState extends State<DepartmentList> {
       isFromProgressView,
       isFromSubmittedView,
       submissionNo) async {
-    if (!isFromSubmittedView) {
+    if (!isFromSubmittedView || isSupervisor) {
       Navigator.pushNamed(context, "/submit-survey", arguments: {
         "hospital_id": hospitalId,
         "department_id": departmentId,
@@ -179,7 +205,7 @@ class _DepartmentListState extends State<DepartmentList> {
         'submissions': submissions
       });
     } else if (isFromSubmittedView) {
-      Navigator.pushNamed(context, "/submitted-survey-list", arguments: {
+      Navigator.pushNamed(context, "/show-survey-details", arguments: {
         'hospitalName': hospitalName,
         'hospitalId': hospitalId,
         'departmentId': departmentId,

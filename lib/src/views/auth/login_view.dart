@@ -207,6 +207,7 @@ class _LoginState extends State<Login> {
       setState(() {
         Constants.prefs.setString('access_token', jsonData['access_token']);
         Constants.prefs.setBool("loggedIn", true);
+        Constants.prefs.setString("userRole", 'Admin');
         Navigator.pushReplacementNamed(context, '/home');
       });
     } else {
